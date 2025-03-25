@@ -1,4 +1,9 @@
 
+
+--- Datos de prueba mios. 
+INSERT INTO DEPT (DEPT_NO, DNOMBRE, LOC)
+VALUES (50, 'INVESTIGACIÓN', 'MADRID');
+
 --- estas son  unas consultas de pruebaa. 
 select * from dept;
 select * from emp;
@@ -65,8 +70,33 @@ select (salario + comision) as total from emp;
 -- en esta parte "(SALARIO + COMISION) >= 344500;"   hay que poner el cálculo no vale con el alias.  
 select (salario + comision) as total from emp where (SALARIO + COMISION) >= 344500;
 
-
 -- se le llama cursor al resultado de la consulta.
+-- order by puede filtar sobre total, porque lo hace sobre el resultado que extrea el where, que es la difereicia 
+-- entre buscar el total en el where. 
+select (salario + comision) as total from emp where (SALARIO + COMISION) >= 344500 order by total;
+
+-- la clausula distinct. se utiliza para el select. Elimina repetidos de la consulta. 
+--- mostrar el oficio de los empleados. 
+select distinct oficio from emp
+
+--Ejercicios. desde el 6 hasta el 13. 
+select * from enfermo where fecha_nac < '11/01/70';
+select * from enfermo where fecha_nac < '11/01/70' order by inscripcion;
+select * from plantilla where turno = 'T';
+select * from plantilla where turno = 'N';
+select *   from doctor where (salario*12) > 3000000;
+--select (salario * 12) salarioTotal from plantilla;
+select salario  from plantilla where salario between 200000 and 225000;
+--select * from emp;
+select * from emp where fecha_alt < '01/01/80' or fecha_alt > '12/12/82';
+--select * from dept;
+--desc dept;
+select distinct DNOMBRE from dept where LOC in ('MADRID', 'BARCELONA');
+--select  DNOMBRE from dept where LOC in ('MADRID', 'BARCELONA');
+
+
+
+
 
 
 
