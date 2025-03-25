@@ -13,3 +13,4 @@ pacoserrano@gmail.com
 Base de datos Oracl Express (Gratis).
 
 
+No s usa el autoincrmenteal 
