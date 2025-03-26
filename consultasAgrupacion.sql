@@ -55,6 +55,55 @@ select count(*), oficio from emp where salario > 200000 and oficio in ('ANALISTA
 select count (*)  as empleados, oficio from emp group by oficio having count(*) > 2;
 
 
+---Ejercicios punto 2. 
+select * from emp;
+--2
+select max (SALARIO) as salarioMaximo, min (SALARIO) as salarioMinimo, max (SALARIO) - min (SALARIO) as diferenciaEntreSalarioMaximoYminimo from emp group by oficio having oficio ='EMPLEADO';
+--4
+select count (oficio), oficio from emp group by oficio;
+-- 5
+select count (dept_no) as numeroEmpeadosDepartamento from emp group by dept_no;
+select count (dept_no) as numeroEmpeadosDepartamento from emp group by dept_no having count (dept_no) >= 4;
+
+--7
+select count (funcion), funcion from plantilla group by funcion order by funcion;
+select count (*), funcion from plantilla group by funcion having funcion in('ENFERMERO', 'ENFERMERA', 'INTERINO') order by funcion;
+
+--8
+select * from emp;
+select count (oficio), dept_no from emp group by dept_no;
+select count (oficio), dept_no from emp group by dept_no  having count (oficio) >= 2;
+select count (oficio), dept_no, oficio from emp group by dept_no, oficio having count (oficio) >= 2;
+
+--10
+select count (nombre), nombre from sala group by nombre;
+select avg(num_cama), count (nombre), nombre from sala group by nombre;
+
+--11.
+select * from plantilla;
+select * from plantilla where sala_cod = 6;
+select avg (salario) from plantilla  where sala_cod = 6;
+
+select  avg (salario) from plantilla group by funcion having sala_cod = 6;
+select avg (salario) from plantilla group by funcion where sala_cod = 6;
+select avg (salario), funcion, count(*) from plantilla group by funcion, sala_cod having sala_cod = 6;
+--- en este caso ver que no hay que agrupar por sala_cod, si no que la saala tiene que ser la 6. 
+select avg (salario), funcion, count(*) from plantilla  where sala_cod = 6 group by funcion;
+
+--13.
+select * from enfermo;
+select count(*), sexo from enfermo group by sexo;
+
+--15. ???
+select * from sala;
+select count(*), nombre  from sala group by nombre;
+select count(*), hospital_cod  from sala group by hospital_cod;
+
+---16. 
+select * from plantilla;
+select count (*) from plantilla group by funcion having funcion = 'ENFERMERA';
+select count (*),sala_cod  from plantilla where funcion = 'ENFERMERA'   group by sala_cod;
+
 
 
 

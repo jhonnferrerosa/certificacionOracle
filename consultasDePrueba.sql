@@ -104,5 +104,3 @@ select distinct DNOMBRE from dept where LOC in ('MADRID', 'BARCELONA');
 
 
 
-
-
