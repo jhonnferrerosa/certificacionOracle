@@ -1,5 +1,13 @@
 
 
+select * from dept;
+select * from emp;
+select * from enfermo;
+select * from doctor;
+select * from hospital;
+select * from sala;
+select * from plantilla;
+
 
 --- tablas que tengan relacion entre sí.
 --Primero)  Necesitamos la columna de relación entre las tablas. 
