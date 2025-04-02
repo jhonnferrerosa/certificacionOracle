@@ -113,3 +113,5 @@ select  hospital.nombre, sala.nombre from sala cross join hospital;
 
 
 
+
+

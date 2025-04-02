@@ -4,6 +4,8 @@
 INSERT INTO DEPT (DEPT_NO, DNOMBRE, LOC)
 VALUES (50, 'INVESTIGACIÓN', 'MADRID');
 
+INSERT INTO DEPT (DEPT_NO, DNOMBRE, LOC) VALUES (50, 'LOGÍSTICA', 'VALENCIA');
+
 --- estas son  unas consultas de pruebaa. 
 select * from dept;
 select * from emp;
