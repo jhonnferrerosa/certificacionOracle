@@ -7,6 +7,9 @@ select * from hospital;
 select * from sala;
 select * from plantilla;
 
+
+
+
 alter table dept add constraint pk_dept primary key (dept_no);
 -- todas las restricciones del usuario .
 select * from user_constraints;
@@ -84,6 +87,47 @@ alter table emp add constraint fk_emp_dept foreign key (dept_no) references dept
 
 
 rollback;
+
+--mejor no usar autoincrement.  es mejor no usar un campo identidad.  identity(1,1).   
+---SECUENCIA PARA DEPARAMENTOS. 
+select * from dept;
+delete from dept where dept_no = 70;
+create sequence seq_dept increment by 10 start with 40;
+
+--Una secuenci no se puede modificar. 
+select seq_dept.nextval as siguiente from dual;
+-- no se puede acceder al current val hasta que no hemos ejecutado nextval. 
+select seq_dept.currval as siguiente from dual;
+-- en e caso de que lo queramos utilizar hay que llamarlo. 
+insert into dept values (seq_dept.nextval, 'Recursos humano', 'avila');
+
+SELECT TABLE_NAME
+FROM USER_TABLES;
+
+select * from hospital;
+insert into hospital values (20, 'ramanCajal', 'esquerdo', '964-4264', seq_dept.nextval);
+
+
+--1) una pk en hospital. 
+select * from hospital;
+desc hospital;
+delete from hospital where num_cama = 150;
+alter table hospital add constraint pk_hospital_cod primary key (hospital_cod);
+create sequence seq_hospital increment by 10 start with 50;
+--2) pk en doctor 
+select * from doctor;
+desc doctor;
+alter table doctor add constraint pk_doctor_doctor_no primary key (doctor_no);
+--3) relacionar doctores con hospital 
+alter table doctor add constraint fk_doctor_hospital foreign key (hospital_cod) references hospital (hospital_cod) on delete cascade;
+alter table doctor add constraint fk_doctor_hospital foreign key (hospital_cod) references hospital (hospital_cod);
+alter table doctor drop constraint fk_doctor_hospital;
+--4) las personas de la plantilla solo pueden trabajar mañana tarde o noche .
+select * from plantilla;
+alter table plantilla add constraint ch_plantilla_turno_solotresturno check (turno = 'T' or turno = 'M' or turno = 'N'); 
+insert into plantilla values(17,2,8519,'chuko c.','ENFERMERO','T',252200);
+insert into plantilla values(17,2,8519,'chuko c.','ENFERMERO','S',252200);
+
 
 
 
