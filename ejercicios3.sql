@@ -114,4 +114,138 @@ select  hospital.nombre, sala.nombre from sala cross join hospital;
 
 
 
+----  8/4/2025
+select * from emp;
+select * from emp where oficio = 'ANALISTA';
+select * from emp where LOWER(oficio) = 'analista';
+
+--estamos poniendo valores estatios:   analista. 
+-- tambien podriamos incluir valores dinámicos , por lo que tendríamos que convertir las dos comparaciones. 
+select * from emp where upper (oficio) = upper ('&dato');
+
+-- esta la posibilidad de concatenr textos en una sola columna.   con este carcter:  |||  
+select apellido || oficio as descripcionapellidooficio from emp;
+
+-- el initcap  hace que se muestre la primera letra en mayusculas. 
+select apellido from emp;
+select initcap(apellido) as oficioconmayuscula from emp;
+select initcap(apellido || '' || oficio) from emp;
+select concat ('Nuestro empleado es... ', apellido) from emp;
+
+--- el substr    extrae una cadena de carateres
+select * from emp;
+select * from dual;
+select substr ('florero', 1, 4) as dato from dual;
+select substr ('florero', 4) as dato from dual;
+
+select * from emp where apellido like 's%';
+select substr (apellido, 1, 1) as unaletra from emp;
+---  este es más eficiente que LIKE. 
+select * from emp where substr (apellido, 1, 1) = 's';
+select length('libro') from dual;
+
+---mostrar los apellidos que tengan sólo 4 letras. 
+select * from emp where apellido like '____';
+--  este es más eficiente. 
+select * from emp where length(apellido) = 4;
+
+--- te dice el infice en el que esta ese caracter o texto dentro de la columna. 
+select instr ('benito', 'n') from dual;
+select * from dual where instr ('hola@gmail.com', '@') > 0;
+
+select lpad (dept_no, 5, '$') from emp;
+select rpad (dept_no, 5, '$') from emp;
+
+select round (3.1415, 2) from dual;
+select round (3.9415) from dual;
+select trunc (3.9415) from dual;
+
+-- resto, averiguar si el número es par.
+SELECT MOD(99, 2) FROM dual;
+SELECT MOD(88, 2) FROM dual;
+
+--mostrar empledos cuto salario sea par. 
+select * from emp;
+SELECt * FROM emp where mod (salario, 2) = 0;
+SELECt * FROM emp where mod (emp_no, 2) = 0;
+SELECt * FROM emp where mod (emp_no, 2) = 1;
+
+select sysdate from dual;
+select sysdate + 10 from dual;
+SELECT TO_DATE('08/04/25', 'DD/MM/RR') + 10 FROM DUAL;
+
+SELECT Apellido, MONTHS_BETWEEN(SYSDATE,fecha_alt) as Meses FROM emp;
+
+--agrega N  meses a la fecha que le digamos. 
+select  add_months (sysdate, 5) from dual;
+
+SELECT  NEXT_DAY(sysdate,'LUNES') FROM dual;
+SELECT  NEXT_DAY(sysdate,2) FROM dual;
+
+SELECT Apellido, Fecha_alt, LAST_DAY(fecha_alt) as "Último día del mes" FROM EMP;
+
+--empleados redondeados la fecha al mes. 
+select apellido, fecha_alt, round(fecha_alt, 'MM')  from emp;
+
+select apellido, fecha_alt, trunc(fecha_alt, 'MM')  from emp;
+select apellido, fecha_alt, trunc(fecha_alt, 'YY')  from emp;
+
+--- Con esto se puede hacer el CAST a los datos. 
+SELECT FECHA_ALT,TO_CHAR (FECHA_ALT, 'DD=MM=YYYY') as FORMATO from emp;
+SELECT FECHA_ALT,TO_CHAR (FECHA_ALT, 'YYYY=DD=MM') as FORMATO from emp;
+
+--formato a números. 
+select to_char (7458, '0000L') as zero from dual;
+select to_char (7458, '0000$') as zero from dual;
+
+select to_char (sysdate, 'HH24:MI:SS') from dual;
+
+-- si queremos incluir texto entre to_char y los formatos, se realiza con "" dentrode las simples. 
+select to_char (sysdate, '"Hoy es "DD" de "month" de "YEAR') from dual;
+
+--funciones de conversion. 
+select '08/04/2025' from dual;
+select to_date('08/04/2025') + 2 from dual;
+select '12' + 2 from dual;
+select to_number('12') + 2 from dual;
+
+--funciones generales. 
+---NVL  sirve para evitar los NULL y sustituirlo. 
+select * from emp;
+select apellido, salario, comision from emp;
+--- podemos hacer que en vez de que se quede NULL, que se escriba otro valor. 
+select apellido, salario + nvl(comision,0)  as totalsalriocomision from emp;
+
+---DECODE es solo de la BBDD de Oracle, que funciona igual que el CASE. 
+--mostrar el turno en palabra de mañana tarde noche de la plantilla. 
+select * from plantilla;
+-- en el caso de que se encuentre un valor de la tabla al que no se asocie entonces eso es para los casos 
+-- en los que no se defina nada. 
+select apellido, decode (turno, 'M', 'mañana', 'N', 'noche', 'T', 'tarde', 'no se he definido') as turno from plantilla;
+
+-- quiero saber la fecha del proximo miercles que juega el Madrid. 
+select next_day (sysdate, 'miércoles') from dual;
+select next_day (sysdate, 'miércoles') from dual;
+
+
+to_char (sysdate, 'HH24:MI:SS');
+
+
+select to_char (next_day (sysdate, 'miércoles'), '"el dia "DD " juega el Madrid"') from dual;
+select to_char (next_day(next_day (sysdate, 'miércoles')), '"el dia "DD " juega el Madrid"') from dual;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
