@@ -353,6 +353,8 @@ comment on table emp  is ' esto es un comentario de prueba';
 
 
 
+drop database baseDatosPrueba;
+
 
 
 

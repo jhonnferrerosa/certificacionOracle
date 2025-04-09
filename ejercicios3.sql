@@ -235,6 +235,47 @@ select to_char (next_day (sysdate, 'miércoles'), '"el dia "DD " juega el Madrid
 select to_char (next_day(next_day (sysdate, 'miércoles')), '"el dia "DD " juega el Madrid"') from dual;
 
 
+--9/4/2025  ejercicios de SQL. 
+--1.  Mostrar todos los apellidos de los empleados en Mayúsculas
+select * from emp;
+select upper(apellido) from emp;
+
+--2 Construir una consulta para que salga la fecha de hoy con el siguiente formato:
+select to_char (sysdate, 'HH24:MI:SS') from dual;
+select to_char (sysdate, 'dd-MM-YYYY') from dual;
+select to_char (sysdate, 'day" "dd" de "month" del "YYYY') from dual;
+select to_char (sysdate, 'day" "dd" de "month" del "YYYY', 'nls_date_language = ITALIAN') from dual;
+
+--3   Queremos cambiar el departamento de Barcelona y llevarlo a Tabarnia. Para ello tenemos que saber qué empleados cambiarían de localidad y cuáles no.  
+--Combinar tablas y mostrar el nombre del departamento junto a los datos del empleado.1
+select * from emp inner join dept on emp.dept_no = dept.dept_no;
+select emp_no, loc from emp inner join dept on emp.dept_no = dept.dept_no;
+select emp_no, decode (loc, 'BARCELONA', 'se va a aTabarria', 'No se cambia de localidad') from emp inner join dept on emp.dept_no = dept.dept_no;
+
+--4 Mirar la fecha de alta del presidente. Visualizar todos los empleados dados de alta 330 días antes que el presidente. 
+select * from emp;
+select emp_no, oficio, fecha_alt  from emp;
+select emp_no, oficio, to_date ('17/11/05') - fecha_alt  from emp;
+select emp_no, oficio, fecha_alt  from emp where fecha_alt <=  (select FECHA_ALT from emp where oficio = 'PRESIDENTE') - 330;
+
+--5 Nos piden un informe como este:  ??? no entiendo el ejercicio. 
+select * from emp;
+select rpad(apellido, 13, '.'), rpad(oficio, 13, '.'), rpad (salario, 13, '.'), rpad(dept_no, 13, '.') from emp;
+
+
+
+---6 Nos piden otro, en el que se muestren todos los empleados de la siguiente manera:
+select * from emp;
+select apellido, fecha_alt from emp;
+select to_char (sysdate, '"Hoy es "DD" de "month" de "YEAR') from dual;
+select to_char (sysdate, '""DD') from emp;
+select 'el señor  ' || initcap(apellido) || ' con cargo '  || initcap(oficio) || ' se dio de alta el ' || to_char (fecha_alt, 'day"  " dd " de " month " del " YYYY') || ' en la empresa' as titulo from emp;
+
+
+
+
+
+
 
 
 
