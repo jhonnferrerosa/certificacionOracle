@@ -1,7 +1,7 @@
 
 
 
------ ejercicios 3. consultas de combinacion. 
+----- ejercicios 3. consultas de combinacion.  esto es un comentrio. 
 --1
 select * from dept;
 select * from emp;
@@ -233,17 +233,6 @@ to_char (sysdate, 'HH24:MI:SS');
 
 select to_char (next_day (sysdate, 'miércoles'), '"el dia "DD " juega el Madrid"') from dual;
 select to_char (next_day(next_day (sysdate, 'miércoles')), '"el dia "DD " juega el Madrid"') from dual;
-
-
-
-
-
-
-
-
-
-
-
 
 
 
