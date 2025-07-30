@@ -1,4 +1,8 @@
 
+/*  
+esto es un comentarioo 
+*/
+
 
 --- esto es la creación de las tablas únicamente con la clave primaria como restricción. 
 DROP TABLE DEPT;
@@ -597,6 +601,7 @@ select concat ('Nuestro empleado es... ', apellido) from emp;
 select * from emp;
 select * from dual;
 select substr ('florero', 1, 4) as dato from dual;
+select substr ('abcdefg', 4, 2) as dato from dual;
 select substr ('florero', 4) as dato from dual;
 select * from emp where apellido like 's%';
 select * from emp where apellido like 's%a';
@@ -757,5 +762,4 @@ select * from user_constraints;
 -- este e un ejemplo de update. 
 update emp set salario = -1 where emp_no = 7782;
 select * from emp;
-
 

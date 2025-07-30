@@ -41,7 +41,6 @@ UNDEFINE localidad;
 
 --10/4/2025
 --ejercicios de sintaxisu 
-
 --2
 INSERT INTO emp VALUES('7839', 'rey', 'PRESIDENTE', NULL, TO_DATE('17-11-2005', 'DD-MM-YYYY'), 650000, NULL, 10);
 
@@ -95,7 +94,6 @@ BEGIN
 end;
 
 --7
-
 DECLARE
   miFecha date := sysdate;
   v_cantidadmeses integer := 0;
@@ -106,7 +104,6 @@ BEGIN
 end;
 
 --8
-
 DECLARE
   v_numerouno integer := 0;
   v_numerodos integer := 0;
@@ -116,7 +113,6 @@ BEGIN
   v_numerodos := '&numerodos';
   dbms_output.put_line ('El resto de la división es:  ' || mod(v_numerouno, v_numerodos));
 end;
-
 
 --9
 DECLARE
@@ -139,12 +135,11 @@ BEGIN
   DELETE FROM emp WHERE emp_no = v_numerempleado;
 end;
 
-
 UNDEFINE numerodeempleado;
-
-
----  aquí van  ir las estructuras de control.
---- en el texto es en el que tienes que poner las comillas, en el caso de que sea un entero,entonces no hace falta tener las comillas.
+--  aquí van  ir las estructuras de control.
+-- en el texto es en el que tienes que poner las comillas, en el caso de que sea un entero,entonces no hace falta tener las 
+-- comillas, esto a la hora de pedir valores por parámetro, pero lo que pasa es que el usar las comillas para pedir datos, 
+--funciona en los dos tipos de datos. 
 
 declare 
   v_minumerouno integer;
@@ -498,6 +493,7 @@ end;
 --22/4 
 --consultas de acción. 
 --  insertar 5 departamentos en un bloque plsql dinámico. 
+select * from dept;
 declare 
     v_nombre dept.dnombre%type;
     v_loc dept.loc%type;
@@ -527,11 +523,15 @@ begin
 end;
 
 --- realizar un bloque que pedirá un número al usuario y mostrará el departamento con dicho número. 
+select * from dept;
 declare 
     v_id integer;
+    miVariableFila dept%rowtype;
 begin
     v_id := &id;
-    select * from dept where dept_no = v_id;
+    select * into miVariableFila from dept where dept_no = v_id;
+    dbms_output.put_line (miVariableFila.dnombre);
+    dbms_output.put_line ('Fin de la ejecución. ');
 end;
 
 
@@ -560,6 +560,11 @@ begin
     loop
         -- extraemos los datos del cursor. 
         fetch cursoremp into v_apellido, v_sal;
+        if (cursoremp%isopen) then
+            dbms_output.put_line ('el cursor está abierto. ');
+        else
+            dbms_output.put_line ('el cursor está cerrado. ');
+        end if;
         -- en not found salta cuando no se ha recuperado una fila de la consulta. 
         exit when cursoremp%notfound;
         --dibujamos las variables. 
@@ -569,7 +574,6 @@ begin
 end;
  
  
----SQL%cout, vale para encontrar si se ha podido hacer cambios en esa consulta. 
 --sql%rowcount también es para consultas de acción. 
 --increemntar en 1 el salario  de los emleados ddel departamento 10. 
 -- mostrar el númers de los empeados modificados. 
@@ -612,12 +616,56 @@ begin
     v_loc := '&loc';
     select dept_no into v_dept_noleido from dept where dept_no = v_dept_no;
     dbms_output.put_line (v_dept_noleido);
+    
+    
+    --- cuidado porque en este caso nunca va a llegar al primer if, ya que direcamente en el caso de que no se haya recuperado ningún
+    -- valor, entonces va a saltar directamente a la excaption. 
     if (v_dept_noleido is null) then 
-        dbms_output.put_line ('no existe ese deartamento');
+        dbms_output.put_line ('no existe ese deartamento, esto no debería de ejecutarse nunca. ');
     else
         dbms_output.put_line ('si que existe ese dept');
     end if;
+    
+    exception
+        when no_data_found then
+            dbms_output.put_line ('el error ha sido not data found, es decir, no se ha encontado ningún registro en la consulta con esos parámetros. ');
 end;
+
+
+
+
+
+
+----- ejercicio para ver que el IS NULL no fiunciona ni con  XXX%type ni con XXX%rowtype. 
+declare 
+    miDept_no  dept.dept_no%type;
+    miFilaDept  dept%rowtype;
+begin  
+    dbms_output.put_line ('comienzaxx. ');
+    miDept_no := &parametroa;
+    
+    select * into miFilaDept from dept where dept_no = miDept_no;
+    dbms_output.put_line ('Fila leida:  ' || miFilaDept.dept_no || miFilaDept.dnombre || miFilaDept.loc);
+    
+    --- esto de AQUI no funciona. 
+    --if (miFilaDept is null) then
+    --    dbms_output.put_line ('el valor consultado es nulo. ');
+    --else
+    --    dbms_output.put_line ('Se ha encontrado un valor. ');
+    --end if;
+    
+    if (miFilaDept.dept_no is null) then 
+        dbms_output.put_line ('dentro de la fila, el valor dept_no es nulo, es decir, no se ha devuelto nada de la consulta. ');
+    else
+        dbms_output.put_line ('la consulta con dept_no tiene un valor. ');
+    end if;
+    
+    exception 
+        when no_data_found then
+            dbms_output.put_line ('el error ha sido not data found, es decir, no se ha encontado ningún registro en la consulta con esos parámetros. ');
+    dbms_output.put_line ('fin del programa... ');
+end;
+
 
 
 select * from dept;
@@ -799,17 +847,19 @@ end;
 
 
 ---  24/4/2025  control de exceptions. 
+--no_data_found
+--zero_divide
 declare
     miException exception;
     miNumeroUno number := 444;
     miNumeroDos number := 0;
     miNumeroTres number;
 begin
-    miNumeroTres := miNumeroUno / miNumeroDos
+    dbms_output.put_line ('Comienza el programa. ');
+    miNumeroTres := miNumeroUno / miNumeroDos;
     -- esto no se está ejecutando  (1/2). 
     dbms_output.put_line (miNumeroTres);
     dbms_output.put_line ('fin del programa. ');
-    
     -- esto no se está ejecutando (2/2). 
     exception
         when zero_divide then
@@ -1357,7 +1407,6 @@ as
     as 
     begin
         dbms_output.put_line (' saludo desde el procedimiento almacenado dentro de un packete.');
-    
     end;
 end paquetePrueba;
 
@@ -1404,13 +1453,8 @@ end;
 select * from emp;
 delete from emp where emp_no = 7888;
 
-
 --- de esta forma es de la que se borra. 
 DROP PACKAGE paquetedelete;
-
-
-
-
 
 create or replace package paquetesalariosemp
 as
@@ -1761,8 +1805,6 @@ end;
 
 update doctor set salario = 123456 where doctor_no = 386;
 
-
-
 -- no podemos tener dos triiger del mismo tipo en una tabla. 
 -- cuisdado porque hay triggers que no se pueden hacer dos vaces. 
 select * from dept;
@@ -2059,13 +2101,110 @@ end;
 insert into vistaDoctor values (111, 'casados', 'espialista', 450000, 'provincial');
 
 
---- SQL.dinámico. 
+
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+--PRUEBAS
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+
+select substr ('abcdefg', 4, 2) as dato from dual;
+select substr ('abcdefg', 24, 2) as dato from dual;
+
+alter session set NLS_DATE_FORMAT = 'MON-DD-YYYY';
+
+declare
+    miVariable integer := 2;
+    --dos date := SYSDATE - 10;
+    --cuatro varchar2 := null;
+    --miVariablePrueba_h_#_$ number;
+    --PruebaXX number;
+    --pruebaYYY simple_integer := 0;
+    --pruebaConstane  constant integer := 333;
+    --pruebaConstanteDos  number(8,2);
+    seis varchar (80) := SUBSTR ('Oracle corporation', 24, 0);
+    --salary$ varchar2(10) not null := '9000$';
+    ---miNumeroA, miNumeroB number;   -- esta linea NO complila. 
+begin
+    dbms_output.put_line ('esto es una prueba. ');
+    dbms_output.put_line ('esta es la fecha de HOY: ' || sysdate);
+    dbms_output.put_line ('esta es la fecha de HOY: ' || to_char(sysdate));
+    DBMS_OUTPUT.PUT_LINE('Formato actual de fecha (NLS_DATE_FORMAT): ' || 
+        SYS_CONTEXT('USERENV', 'NLS_DATE_FORMAT'));
+    dbms_output.put_line (seis);
+    --dbms_output.put_line (dos);
+    --pruebaConstanteDos := 123456.141592;
+    --dbms_output.put_line (pruebaConstanteDos);
+    --dbms_output.put_line ('fin de la ejeucion');
+    dbms_output.put_line (case miVariable when 4 then 'miVariable vale 4' else 'ne sé lo que vale. ' end);
+    dbms_output.put_line (case when miVariable = 4 then 'miVariable vale 4' else 'ne sé lo que vale. ' end);
+end;
 
 
+declare
+    miNumero integer;
+    function saluda return number as
+    begin
+        dbms_output.put_line ('saluda.');
+        return 0;
+    end;
+begin
+    miNumero := saluda;
+    dbms_output.put_line (miNumero);
+end;
+
+declare
+    miNumero integer;
+begin
+    function saludaDos return number as
+    begin
+        dbms_output.put_line ('saludaDos');
+        return 0;
+    end;
+    miNumero := saludaDos;
+    dbms_output.put_line (miNumero);
+end;
 
 
+select * from dept;
+insert into dept (dept_no, dnombre) values (212, 'd212');
+update dept set dnombre = 'departamentoxx212' where dept_no = 212;
+create or replace trigger trigger_b_u_tablaDeptMuestraValoresNuevosYViejos 
+before update
+on dept
+for each row
+declare
+    procedure saludaTrigger_b_u_tablaDeptMuestraValoresNuevosYViejos is
+    begin
+        dbms_output.put_line ('saludaTrigger_b_u_tablaDeptMuestraValoresNuevosYViejos');
+    end;
+begin
+    dbms_output.put_line ('se ejecuta: trigger_b_u_tablaDeptMuestraValoresNuevosYViejos');
+    dbms_output.put_line (:old.dnombre);
+    dbms_output.put_line (:new.dnombre);
+    saludaTrigger_b_u_tablaDeptMuestraValoresNuevosYViejos;
+end;
 
+select * from employes;
+drop table employes;
+create table employes (id integer, name varchar(20), salary integer);
+create or replace procedure add_employee (e_id number, e_name varchar2, e_salary number default 4000) is
+begin
+    insert into employes (id, name, salary) values (e_id, e_name, e_salary);
+end;
 
+begin 
+    add_employee (110, 'jhon');
+end;
 
 
 
