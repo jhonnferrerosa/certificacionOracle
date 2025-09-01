@@ -228,7 +228,10 @@ INSERT INTO emp VALUES('7904', 'ford', 'EMPLEADO', 7907, TO_DATE('04-04-1996', '
 INSERT INTO emp VALUES('7914', 'gutierrez', 'ANALISTA', 7919, TO_DATE('20-10-1986', 'DD-MM-YYYY'), 258500, 50000, 20);
 commit;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7212cfea905fc3adf8e90b5195dda20382738e63
 --En este apartado voy a poner las restricciones de clave foranea para que exista integridad referencial entre las tablas, de tal forma 
 -- que queden como parece en el dibujo del modelo entidad - relación.
 alter table emp add constraint fk_emp_dept foreign key (dept_no) references dept (dept_no);
@@ -821,6 +824,8 @@ end;
 
 -- esto es una prueba de commit desde Ubuntu . 
 
+--- ahora esto vuelve a ser una prueba desde Windows. 
 
 
+-- ahora otra desde Windows:  son las 6:50
 
