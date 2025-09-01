@@ -228,14 +228,6 @@ INSERT INTO emp VALUES('7904', 'ford', 'EMPLEADO', 7907, TO_DATE('04-04-1996', '
 INSERT INTO emp VALUES('7914', 'gutierrez', 'ANALISTA', 7919, TO_DATE('20-10-1986', 'DD-MM-YYYY'), 258500, 50000, 20);
 commit;
 
-select * from dept;
-select * from emp;
-select * from hospital;
-select * from sala;
-select * from doctor;
-select * from enfermo;
-select * from ocupacion;
-select emp_no, salario from emp where dept_no = 10;
 
 --En este apartado voy a poner las restricciones de clave foranea para que exista integridad referencial entre las tablas, de tal forma 
 -- que queden como parece en el dibujo del modelo entidad - relación.
@@ -244,6 +236,13 @@ alter table doctor add constraint fk_doctor_hospital foreign key (hospital_cod) 
 alter table sala add constraint fk_sala_hospital foreign key (hospital_cod) references hospital (hospital_cod);
 alter table plantilla add constraint fk_plantilla_hospital foreign key (hospital_cod) references hospital (hospital_cod);
 
+select * from dept;
+select * from emp;
+select * from hospital;
+select * from sala;
+select * from doctor;
+select * from enfermo;
+select * from ocupacion;
 
 -- Tema 1. ejercicios 1. consultas de selección. 
 --1. 
