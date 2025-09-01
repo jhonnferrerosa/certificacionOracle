@@ -4,6 +4,37 @@ esto es un comentarioo
 */
 
 
+--DDL: Data Definition Language.  Create, alter y drop. 
+--DCL: Data control Language. Grant, deny y revoke. 
+--DML: Data Manipulation Language. Select, insert, update y delete. 
+--Los nombres de variables deben empezar siempre por letras y además sólo pueden tener _#$
+
+-- el having sólo puede buscar por las columnas que se agrupa (es decitr, sólo las que mete en el group by), o sólo puede
+--buscar por consultas de agrupacion (es decir count, max, min.. )
+-- el where puede buscar por el resto de columnas por las que no se agrupa, pero no puede buscar por consultas de agrupación.
+
+-- No olvidarse de como se hace un inner join: select * from emp inner join dept on emp.dept_no = dept.dept_no;
+
+
+DECLARE
+  v_guid VARCHAR2(32); -- Para almacenar el GUID como una cadena hexadecimal
+BEGIN
+  -- Generar un identificador único usando SYS_GUID()
+  v_guid := SYS_GUID();
+  
+  -- Mostrar el GUID generado
+  DBMS_OUTPUT.PUT_LINE('Identificador único generado: ' || v_guid);
+  v_guid := 333;
+  DBMS_OUTPUT.PUT_LINE('Identificador único generado: ' || v_guid);
+END;
+/
+
+declare
+BEGIN
+    dbms_output.put_line ('hola mundo');
+end;
+
+
 --- esto es la creación de las tablas únicamente con la clave primaria como restricción. 
 DROP TABLE DEPT;
 DROP TABLE EMP;
@@ -204,6 +235,7 @@ select * from sala;
 select * from doctor;
 select * from enfermo;
 select * from ocupacion;
+select emp_no, salario from emp where dept_no = 10;
 
 --En este apartado voy a poner las restricciones de clave foranea para que exista integridad referencial entre las tablas, de tal forma 
 -- que queden como parece en el dibujo del modelo entidad - relación.
@@ -212,7 +244,6 @@ alter table doctor add constraint fk_doctor_hospital foreign key (hospital_cod) 
 alter table sala add constraint fk_sala_hospital foreign key (hospital_cod) references hospital (hospital_cod);
 alter table plantilla add constraint fk_plantilla_hospital foreign key (hospital_cod) references hospital (hospital_cod);
 
---delete from hospital;
 
 -- Tema 1. ejercicios 1. consultas de selección. 
 --1. 
@@ -249,7 +280,7 @@ select * from emp where not((fecha_alt > '01/01/1980') and (fecha_alt < '12/12/1
 select dnombre from dept where (loc = 'BARCELONA') or (loc = 'MADRID');
 
 -- Tema1. ejercicios 2. consulta de agrupación. 
---count (*):  cuanta el número de registros incluyendo los NULL. 
+--count (*):  cuenta el número de registros incluyendo los NULL. 
 --count (campo):  cuenta el número de registros sin NULL. 
 --sum (numero)
 --avg (numero)
@@ -762,4 +793,33 @@ select * from user_constraints;
 -- este e un ejemplo de update. 
 update emp set salario = -1 where emp_no = 7782;
 select * from emp;
+
+
+
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+--PRUEBAS
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+
+
+
+begin
+    dbms_output.put_line ('hola mundo');
+end;
+
+-- esto es una prueba de commint que hago desde Windows. 
+
+
+
+
 

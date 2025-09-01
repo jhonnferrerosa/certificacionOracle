@@ -8,8 +8,10 @@ select * from sala;
 select * from plantilla;
 
 declare
+    miVariable_$# integer := 333;
 BEGIN
     dbms_output.put_line ('hola mundo');
+    dbms_output.put_line (miVariable_$#);
 end;
 
 begin
@@ -1727,7 +1729,7 @@ begin
     miArray (1) := 101;
     miArray (2) := 999;
     miArray (3) := 123;
-    --dbms_output.put_line (miArray(1));
+    dbms_output.put_line (miArray(1));
     for i in 1..length(miArray) loop
         dbms_output.put_line (miArray(i));
     end loop;
@@ -1741,6 +1743,7 @@ begin
     dbms_output.put_line ('comienza');
     select * into miArrayPrueba(1) from dept where dept_no = 20;
     select * into miArrayPrueba(2) from dept where dept_no =30;
+    dbms_output.put_line (miArrayPrueba.prior(2));
     for i in 1..miArrayPrueba.count loop 
         dbms_output.put_line (miArrayPrueba(i).dept_no);
     end loop;
@@ -2177,7 +2180,7 @@ end;
 
 select * from dept;
 insert into dept (dept_no, dnombre) values (212, 'd212');
-update dept set dnombre = 'departamentoxx212' where dept_no = 212;
+update dept set dnombre = 'departamentoxxyy212' where dept_no = 212;
 create or replace trigger trigger_b_u_tablaDeptMuestraValoresNuevosYViejos 
 before update
 on dept
@@ -2203,9 +2206,52 @@ begin
 end;
 
 begin 
-    add_employee (110, 'jhon');
+    add_employee (112, 'jhon');
 end;
 
 
+select * from emp;
+select * from emp where dept_no = 10;
+create or replace procedure miPruebaSQLinjection (parametroA varchar) as
+    miSting varchar(100) := parametroA;
+    miCantidadDeFlias integer;
+    miRecordDept dept%rowtype;
+begin
+    dbms_output.put_line ('vamos con el PLSL dinámico. ');
+    execute immediate (miSting);
+    dbms_output.put_line (sql%rowcount);
+    dbms_output.put_line ('fin de la ejecución.');
+end;
 
+begin
+    miPruebaSQLinjection ('update emp set salario = salario + 10 where dept_no = 10');
+end;
+
+SELECT * FROM v$parameter WHERE name = 'plsql_code_type';
+
+
+declare
+    date1 DATE := TO_DATE('10-ENERO-2018', 'DD-MONTH-YYYY');
+    date2 date := sysdate;
+    diferenciaDeFechas integer;
+begin
+    dbms_output.put_line ('comienzaassss');
+    diferenciaDeFechas := date2 - date1;
+    dbms_output.put_line (diferenciaDeFechas);
+    dbms_output.put_line ('fin de fechas. ');
+end;
+
+create or replace procedure calculate_tax (income number, rate number default 0.1) is
+    tax_amount number;
+begin
+    tax_amount := income * rate;
+    dbms_output.put_line ('la cantidad de la tasa es:  ' || tax_amount);
+end;
+
+begin
+    calculate_tax (120);
+    calculate_tax (income => 120);
+end;
+
+ALTER SESSION SET plsql_warnings='DISABLE:ALL';
 
