@@ -829,3 +829,6 @@ end;
 
 -- ahora otra desde Windows:  son las 6:50
 
+---desde ubuntu, son las 2.14
+
+
