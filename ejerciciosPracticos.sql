@@ -45,6 +45,15 @@ DROP TABLE PLANTILLA;
 DROP TABLE ENFERMO;
 DROP TABLE OCUPACION;
 
+
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+   BBDD inicio. 
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+
 CREATE TABLE DEPT
   (DEPT_NO NUMBER(9)
   ,DNOMBRE VARCHAR2(50)
@@ -228,16 +237,20 @@ INSERT INTO emp VALUES('7904', 'ford', 'EMPLEADO', 7907, TO_DATE('04-04-1996', '
 INSERT INTO emp VALUES('7914', 'gutierrez', 'ANALISTA', 7919, TO_DATE('20-10-1986', 'DD-MM-YYYY'), 258500, 50000, 20);
 commit;
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 7212cfea905fc3adf8e90b5195dda20382738e63
 --En este apartado voy a poner las restricciones de clave foranea para que exista integridad referencial entre las tablas, de tal forma 
 -- que queden como parece en el dibujo del modelo entidad - relación.
 alter table emp add constraint fk_emp_dept foreign key (dept_no) references dept (dept_no);
 alter table doctor add constraint fk_doctor_hospital foreign key (hospital_cod) references hospital (hospital_cod);
 alter table sala add constraint fk_sala_hospital foreign key (hospital_cod) references hospital (hospital_cod);
 alter table plantilla add constraint fk_plantilla_hospital foreign key (hospital_cod) references hospital (hospital_cod);
+
+
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+   BBDD fin.  
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+
+-- +-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 select * from dept;
 select * from emp;
@@ -833,3 +846,4 @@ end;
 
 
 -- desde windows. son las 2.22
+
