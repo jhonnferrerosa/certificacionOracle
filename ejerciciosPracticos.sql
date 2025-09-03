@@ -15,6 +15,23 @@ esto es un comentarioo
 
 -- No olvidarse de como se hace un inner join: select * from emp inner join dept on emp.dept_no = dept.dept_no;
 
+-- esto creo que es importante tambien, y es como dar un formato distinto a los valores almacenados en los registros. 
+select APELLIDO, FUNCION, SALARIO
+, case TURNO
+    when 'T' then 'TARDE'
+    when 'M' then 'MAÑANA'
+    else 'NOCHE'
+end as FORMATO
+from PLANTILLA;
+-- este es otro ejemplo que me parece interesante: 
+select APELLIDO, FUNCION, SALARIO
+, case 
+    when SALARIO >= 250000 then 'SALARIO CORRECTO'
+    when SALARIO >= 170000 and SALARIO < 250000 then 'MEDIA SALARIAL'
+    else 'BECARIO'
+end as RANGO_SALARIAL
+from PLANTILLA;
+
 
 DECLARE
   v_guid VARCHAR2(32); -- Para almacenar el GUID como una cadena hexadecimal
