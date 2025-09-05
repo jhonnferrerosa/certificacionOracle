@@ -15,6 +15,8 @@ esto es un comentarioo
 
 -- No olvidarse de como se hace un inner join: select * from emp inner join dept on emp.dept_no = dept.dept_no;
 
+-- precticar el inner join triple.  Ya que no entiendo del todo la funcion del AND en este JOIN triple.  
+
 -- esto creo que es importante tambien, y es como dar un formato distinto a los valores almacenados en los registros. 
 select APELLIDO, FUNCION, SALARIO
 , case TURNO
@@ -348,7 +350,7 @@ select max(salario) as salarioMaximo, min(salario) as salarioMinimo, (max(salari
 select * from emp;
 select max(salario), oficio from emp group by oficio;
 --4 
-select count (oficio), oficio from emp group by oficio;
+select count (emp_no), dept_no, oficio from emp group by dept_no,oficio order by dept_no;
 --5
 select * from emp;
 select count (dept_no) as numeroEmpeadosDepartamento from emp group by dept_no having count (dept_no) >= 4;
@@ -489,9 +491,12 @@ select emp.apellido, emp.oficio, emp.salario, emp.dept_no, dept.dnombre from emp
 select count (emp.emp_no), max (emp.salario),   min (emp.salario), dept.loc from emp inner join dept on emp.dept_no = dept.dept_no where oficio='DIRECTOR' group by dept.loc;
 
 --13. 
-select * from hospital;
 select * from sala;
-select  hospital.nombre, sala.nombre from sala cross join hospital;
+select * from sala inner join hospital on sala.hospital_cod = hospital.hospital_cod;
+select sala.nombre, hospital.nombre from sala cross join hospital;
+select distinct (nombre) from sala;
+select distinct(sala.nombre), hospital.nombre from sala cross join hospital;
+select * from hospital;
 
 --- Tema 2. Ejercicos 1. Colegios.
 ---tabla de profesores. 

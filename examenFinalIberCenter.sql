@@ -220,19 +220,3 @@ execute storeProcedureMiProcedimiento;
 ---------------------++++++------++---+++++
 
 
-insert into dept values (300, 'investigacionDos', 'MADRID');
-
-select * from emp;
-select * from dept;
-
-select * from emp inner join dept on emp.dept_no = dept.dept_no;
-select * from emp left join dept on emp.dept_no = dept.dept_no;
-select * from emp right join dept on emp.dept_no = dept.dept_no;
-
-
-select * from emp inner join dept on emp.dept_no = dept.dept_no where dept.loc = 'MADRID';
-select * from emp right join dept on emp.dept_no = dept.dept_no where dept.loc = 'MADRID';
-
-select count (*) from emp right join dept on emp.dept_no = dept.dept_no where dept.loc = 'MADRID';
-
-
