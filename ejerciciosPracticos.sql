@@ -279,7 +279,7 @@ select * from doctor;
 select * from enfermo;
 select * from ocupacion;
 
--- Tema 1. ejercicios 1. consultas de selección. 
+-- Tema 1. ANSI. ejercicios 1. consultas de selección. 
 --1. 
 select * from emp;
 --2.
@@ -313,7 +313,7 @@ select * from emp where not((fecha_alt > '01/01/1980') and (fecha_alt < '12/12/1
 --13
 select dnombre from dept where (loc = 'BARCELONA') or (loc = 'MADRID');
 
--- Tema1. ejercicios 2. consulta de agrupación. 
+-- Tema1. ANSI. ejercicios 2. consulta de agrupación. 
 --count (*):  cuenta el número de registros incluyendo los NULL. 
 --count (campo):  cuenta el número de registros sin NULL. 
 --sum (numero)
@@ -321,11 +321,13 @@ select dnombre from dept where (loc = 'BARCELONA') or (loc = 'MADRID');
 --max(campo)
 --min(campo)
 -- HAVING es mucho mejor cuando en la tabla hay 1 millon de registros, en lugar de where. 
---mostrar cuantos empleados tenemos por cada oficio  y que sean analista o vendedor. 
--- si queremos filtarr por una funcion de agrupacion, hay que hacerlo con Having. 
+-- mostrar cuantos empleados tenemos por cada oficio  y que sean analista o vendedor. 
+-- si queremos filtarr por una funcion de agrupacion (count, max), hay que hacerlo con Having. 
 select count(*), oficio from emp where salario > 200000 group by oficio having oficio in ('ANALISTA', 'VENDEDOR');
 select count(*), oficio from emp where salario > 200000 and oficio in ('ANALISTA', 'VENDEDOR') group by oficio;
---mostrar cuantos empleados tenemos por cada oficio solamente donde tengamos 2 o más empleados del mismo oficio. 
+-- mostrar cuantos empleados tenemos por cada oficio solamente donde tengamos 2 o más empleados del mismo oficio. 
+-- cuando la condición de búsqueda requiere una función de grupación, es obligatorio hacer usar el HAVING, ya que el where no interpreta las funciones de agrupación. 
+-- esto se debe a que el where establece la condición para cada una de las filas y el having establece la condición para las filas después de que se agrupe.  
 select count (*)  as empleados, oficio from emp group by oficio having count(*) > 2;
 -- Uso óptimo de la palabra clave IN. 
 --para mostrar conincidencia de igualdad. 
@@ -380,7 +382,7 @@ select max (fecha_alt) as fechaReciente, oficio from emp group by oficio;
 select max (fecha_alt) as fechaReciente, oficio from emp group by oficio order by max (fecha_alt) desc;
 --13
 select * from enfermo;
-select count (sexo), sexo from enfermo group by sexo; 
+select sexo, count(inscripcion) from enfermo group by sexo;
 --14
 select * from plantilla;
 select count (empleado_no), turno, avg(salario)*count(empleado_no) as sumaTotalSalario from plantilla group by turno;
@@ -395,7 +397,7 @@ select * from plantilla;
 select count (empleado_no), sala_cod from plantilla group by sala_cod;
 select count (empleado_no), sala_cod from plantilla where funcion = 'ENFERMERA' group by sala_cod;
 
--- Tema 1. ejercicios 3. consultas de combinacion.  esto es un comentario. 
+-- Tema 1. ANSI. ejercicios 3. consultas de combinacion. 
 --- tablas que tengan relacion entre sí.
 --Primero)  Necesitamos la columna de relación entre las tablas. 
 --Segundo) Se debe poner el nombre de cada tabla y columna en la consulta. 
@@ -497,6 +499,192 @@ select sala.nombre, hospital.nombre from sala cross join hospital;
 select distinct (nombre) from sala;
 select distinct(sala.nombre), hospital.nombre from sala cross join hospital;
 select * from hospital;
+
+-- Tema1. Ejercicios4. Subconsultas.
+--1
+select * from emp;
+select min (fecha_alt) from emp;
+select emp_no, apellido, fecha_alt from emp where (fecha_alt = (select min (fecha_alt) from emp));
+--2
+select max (fecha_alt) from emp;
+select emp_no, apellido, fecha_alt from emp where (fecha_alt = (select max (fecha_alt) from emp));
+--3
+select * from emp where apellido = 'jimenez';
+select apellido, salario from emp where oficio = (select oficio from emp where apellido = 'jimenez');
+--4
+select max (salario) from emp where dept_no = 30;
+select apellido, oficio, salario, dept_no from emp where salario > (select max (salario) from emp where dept_no = 30);
+--5
+select * from plantilla;
+select apellido, oficio, dept_no from emp union select apellido, funcion, sala_cod from plantilla;
+--6
+select * from emp;
+select * from dept;
+select dept_no from dept where dnombre = 'VENTAS';
+select apellido, oficio from emp where dept_no = 20;
+select * from emp inner join dept on emp.dept_no = dept.dept_no where dept.dnombre = 'VENTAS';
+select oficio from emp inner join dept on emp.dept_no = dept.dept_no where dept.dnombre = 'VENTAS';
+select distinct (oficio) from emp inner join dept on emp.dept_no = dept.dept_no where dept.dnombre = 'VENTAS';
+select apellido, oficio from emp where dept_no = 20 and oficio in (select distinct (oficio) from emp inner join dept on emp.dept_no = dept.dept_no where dept.dnombre = 'VENTAS');
+--7
+select * from emp;
+select avg (salario) from emp where oficio = 'DIRECTOR';
+select * from emp where salario >= (select avg (salario) from emp where oficio = 'DIRECTOR');
+select * from emp where salario >= (select avg (salario) from emp where oficio = 'DIRECTOR') and oficio <> 'PRESIDENTE';
+--8
+select * from plantilla;
+select * from hospital;
+select * from plantilla where funcion in ('ENFERMERO', 'ENFERMERA');
+select hospital_cod from hospital where nombre = 'san carlos';
+select * from plantilla where funcion in ('ENFERMERO', 'ENFERMERA') and hospital_cod = (select hospital_cod from hospital where nombre = 'san carlos');
+select apellido, funcion, salario, hospital_cod from plantilla where funcion in ('ENFERMERO', 'ENFERMERA') and hospital_cod = (select hospital_cod from hospital where nombre = 'san carlos');
+--9
+select * from doctor;
+select * from plantilla;
+select * from emp;
+select apellido, salario, doctor_no from doctor union select apellido, salario, empleado_no from plantilla union select apellido, salario, emp_no from emp;
+--10
+select apellido, salario, doctor_no from doctor union select apellido, salario, empleado_no from plantilla union select apellido, salario, emp_no from emp;
+select apellido, salario, doctor_no from doctor where lower (especialidad) like ('%o') union select apellido, salario, empleado_no from plantilla union select apellido, salario, emp_no from emp;
+select apellido, salario, doctor_no from doctor where especialidad like ('%o') union select apellido, salario, empleado_no from plantilla where LOWER (funcion) like ('%o') union select apellido, salario, emp_no from emp;
+select apellido, salario, doctor_no from doctor where lower (especialidad) like ('%o') union select apellido, salario, empleado_no from plantilla where lower (funcion) like ('%o') union select apellido, salario, emp_no from emp where lower (oficio) like '%o';
+--11
+select * from doctor;
+select * from hospital;
+select * from doctor where upper (especialidad) = 'CARDIOLOGIA';
+select hospital_cod from doctor where upper (especialidad) = 'CARDIOLOGIA';
+select * from hospital where hospital_cod in (select hospital_cod from doctor where upper (especialidad) = 'CARDIOLOGIA');
+--12
+select * from hospital;
+select * from plantilla;
+select hospital_cod from hospital where upper (nombre) in ('PROVINCIAL', 'GENERAL');
+select * from plantilla where hospital_cod in (select hospital_cod from hospital where upper (nombre) in ('PROVINCIAL', 'GENERAL'));
+select apellido, salario*12 as salarioAnual from plantilla where hospital_cod in (select hospital_cod from hospital where upper (nombre) in ('PROVINCIAL', 'GENERAL'));
+--13
+select * from enfermo;
+select fecha_nac from enfermo where apellido = 'Miller G.';
+select* from enfermo where fecha_nac < (select fecha_nac from enfermo where apellido = 'Miller G.');
+select apellido from enfermo where fecha_nac < (select fecha_nac from enfermo where apellido = 'Miller G.');
+--14
+select * from emp;
+select * from plantilla;
+select * from doctor;
+select max (salario), oficio from emp group by oficio; 
+select max (salario), min (salario), avg(salario), count (emp_no),  oficio from emp group by oficio; 
+select max (salario), min (salario), avg(salario), count (emp_no),  oficio from emp group by oficio union select max (salario), min (salario), avg(salario), count (empleado_no),  funcion from plantilla group by funcion;
+select max (salario), min (salario), avg(salario), count (emp_no),  oficio from emp group by oficio union select max (salario), min (salario), avg(salario), count (empleado_no),  funcion from plantilla group by funcion union select max (salario), min (salario), avg(salario), count (doctor_no),  especialidad from doctor group by especialidad;
+
+--- TEMA 1. ejercicios 5. CONSULTAS DE ACCION. 
+--1
+insert into emp (emp_no, fecha_alt, apellido, oficio, dept_no, salario) values (8001, sysdate, 'Escherri Barrea', 'Programador', 40, 70000);
+--2
+insert into dept values (50, 'Informática', 'Fuenlabrada, Madrid');
+--3
+update dept set loc = 'Teruel' where dept_no = 30;
+--4
+select min (salario) from emp where oficio = 'EMPLEADO';
+insert into emp (emp_no, apellido, salario, comision) values (8002, 'Romeral', 1,1);
+delete from emp where emp_no = 8002;
+insert into emp (emp_no, apellido, salario, comision) values (8002, 'Romeral', (select min (salario) from emp where oficio = 'EMPLEADO'), 0.15*(select min (salario) from emp where oficio = 'EMPLEADO'));
+--5
+update emp set comision =  nvl(comision,0) + salario*0.1; 
+--6
+select * from plantilla;
+select * from plantilla where funcion = 'INTERINO' and turno = 'N';
+update plantilla set salario = salario + salario*0.05 where  funcion = 'INTERINO' and turno = 'N';
+--7
+select * from dept;
+select * from emp where dept_no = 30 or oficio = 'PRESIDENTE';
+update emp set salario = salario + 5000 where dept_no = 30 or oficio = 'PRESIDENTE';
+update emp set salario = salario + 5000 where (dept_no = 30 and fecha_alt < (select fecha_alt from emp where oficio = 'PRESIDENTE')) or oficio = 'PRESIDENTE';
+--8
+select * from emp where apellido like 'sanc%';
+select * from emp where apellido like 'arr%';
+update emp set comision = 12000 + (select comision from emp where apellido like 'arr%'), salario = salario + 0.1*(select salario from emp where apellido like 'arr%') where apellido like 'sanc%';
+--9
+select * from sala;
+select * from hospital;
+select * from sala where hospital_cod = 45;
+--- en este caso veo que no puedo quitar 100 camas de un hospital que tiene sólo 96 camas. 
+select sum(num_cama) from sala where hospital_cod = 45;     
+update sala set num_cama = 0 where hospital_cod = 45;
+--10
+select * from emp;
+--- en este caso primero estoy comparando por día, mes y año. 
+select * from emp where to_char(fecha_alt, 'DD-MON-YYYY') = to_char(sysdate, 'DD-MON-YYYY');
+select * from emp where to_char(fecha_alt, 'YYYY') = to_char(sysdate, 'YYYY');
+update emp set salario = salario + 100000, comision = comision + 25000 where to_char(fecha_alt, 'YYYY') = to_char(sysdate, 'YYYY');
+--11
+select * from hospital;
+select * from doctor;
+insert into doctor(hospital_cod, doctor_no, apellido, especialidad) values (22, 777, 'House', 'diagnóstico');
+--12
+-- este ejrcicio, lo voy a haecr con la fecha máxima 1989, ya que dentro del rango que propone el ejercicio no eiste ningún empleado. 
+select * from emp;
+select * from emp where fecha_alt between '01-JAN-1980' and '31-DEC-1989';
+delete from emp where fecha_alt between '01-JAN-1980' and '31-DEC-1989';
+--13
+select * from hospital;
+select * from doctor where hospital_cod = 22;
+select * from doctor where hospital_cod = 22 and upper(especialidad) like 'PSI%';
+select * from plantilla where UPPER(apellido) like 'AMI%';
+select salario from plantilla where UPPER(apellido) like 'AMI%';
+update doctor set salario = 20000 + (select salario from plantilla where UPPER(apellido) like 'AMI%') where hospital_cod = 22 and upper(especialidad) like 'PSI%';
+--14
+select * from emp;
+insert into emp(emp_no, apellido, oficio, dept_no) values (9001, 'fererosa', 'desarrollador', 40); 
+delete from emp where comision is NULL;
+--15
+select * from dept;
+select * from emp;
+delete from emp where dept_no = (select dept_no from dept where upper(dnombre) = 'PRODUCCIÓN');
+--16
+--  en este punto primero renombro la tabla. 
+RENAME emp TO emp_vieja;
+-- aquí lo que hago es crear la tabla usando la referencia de la tabla renombrada. Cuidado porque para que no me devuelva ningún valor
+-- y se me cree la tabla vacía, lo que hago es consultar una clave que nunca ha existido en la tabla, de forma que sólo voy a obtener 
+-- el nombre de las columnas y no las filas insertadas anteriormente. 
+CREATE TABLE emp AS SELECT * FROM emp_vieja where emp_no = 123456;
+
+
+-- temas2. teoría. 
+INSERT ALL
+INTO DEPT VALUES (50, 'INFORMATICA', 'GETAFE')
+INTO DEPT VALUES (60, 'I+D', 'ALICANTE')
+SELECT * FROM DUAL;
+
+
+-- estas sonsultas devuelven resutados distintos. Como conepto las dos son lo mismo "inner join" lo que pasa es que en el natural join, no se
+-- devuelve las dos columnas de dept_no, si no que sólo se devuelve una. Específicamente lo que hace el natural join es coger las columnas 
+-- en las qué esté la lave foranea para usar esa columna para hacer el inner. 
+select * from emp inner join dept on emp.dept_no = dept.dept_no;
+select * from emp natural join dept;
+
+-- en este otro caso el using nos vale para determinar la columna por la que se va a hacer el inner join de las dos tablas. 
+SELECT * from emp inner join dept using (dept_no);
+
+
+-- esto es para hacer la recuperación jerarquica. Explicación, eso es una forma en la que dentro de una misma tabla (en este ejemplo la tabla emp)
+-- se establece un jerarquía entre las propias filas, de tal forma que usando dos columnas se establece quien es más prioritatio/dependedinte de
+-- la otra. En ste ejemplo ya que la palabra reservada prior está en emp_no, es decir, a la izquierda, entonces significa que la consulta va a sacar 
+-- a las filas que están en un rango por dabajo de esa fila, filtrada por el apellido jimenez. La palabra reservada level, indica el nivel de prioridad
+-- en el que está la fila, recordar que para el caso de la fila consultada (apellido = jimenez) esa siempre va a tener el nivel 1. 
+select level, dir, apellido, oficio, emp_no from emp connect by prior emp_no = dir start with apellido = 'jimenez';
+-- en este caso el prior está a la derecha, es decir, en dir, por lo tanto la consuta jerárquica va a ser ensentido ascendente. 
+select level, dir, apellido, oficio, emp_no from emp connect by  emp_no = prior dir start with apellido = 'jimenez';
+-- El término "SYS_CONNECT_BY_PATH" es algo que se utiliza para acalarar la ruta de las filas de las que es dependiente esa fila. 
+select level, dir, apellido, oficio, emp_no, SYS_CONNECT_BY_PATH(apellido, '/') from emp connect by prior emp_no = dir start with apellido = 'jimenez';
+
+-- en estas consultas se muestra el uso de la palabra reservada intersect. Lo único que hace es coger las filas que conincidan con las dos columnas
+-- de las que se quiere hacer la interseccióm. 
+select * from plantilla where turno = 'T';
+select * from plantilla where funcion = 'ENFERMERA';
+select * from plantilla where turno = 'T' intersect select * from plantilla where funcion = 'ENFERMERA';
+-- esta consulta es la equivalente a la del intersect, ya que reune las dos condiciones de las dos consultas. 
+select * from plantilla where turno = 'T' and funcion = 'ENFERMERA';
+-- esta muestra el uso de la palabra reservada minus. Explicación, lo que hace en este caso es restar las filas que han salido de la segunda consulta. 
+select * from plantilla where turno = 'T' minus select * from plantilla where funcion = 'ENFERMERA';
+
 
 --- Tema 2. Ejercicos 1. Colegios.
 ---tabla de profesores. 
@@ -641,8 +829,8 @@ delete from regiones;
 -- para solucionarlo habria que borrar todos los colegios.
 
 
---Tema 0. Clases de otro profesor llamado Juan. 
---- Esto es para ver todas las tablas que tiene ese usuario. 
+-- Tema 0. Clases de otro profesor llamado Juan. 
+-- Esto es para ver todas las tablas que tiene ese usuario. 
 select * from user_tables;
 -- este es lo mismo que el anterior, pero más concreto ya que realmente lo que más importa es el nombre de las tablas de lo que queremos saber. 
 SELECT TABLE_NAME FROM USER_TABLES;
@@ -850,22 +1038,4 @@ select * from emp;
 
 
 
-begin
-    dbms_output.put_line ('hola mundo');
-end;
-
--- esto es una prueba de commint que hago desde Windows. 
-
-
--- esto es una prueba de commit desde Ubuntu . 
-
---- ahora esto vuelve a ser una prueba desde Windows. 
-
-
--- ahora otra desde Windows:  son las 6:50
-
----desde ubuntu, son las 2.14
-
-
--- desde windows. son las 2.22
 

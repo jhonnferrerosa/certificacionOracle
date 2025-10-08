@@ -83,7 +83,7 @@ ALTER TABLE Nacionalidad
 ADD CONSTRAINT PK_idNacionalidad
 PRIMARY KEY (idNacionalidad);
 
---- aqui faltan las constrains del email, es decir los check. 
+--- aqui faltan las constrains del email, es decir los check. asdf 
 
 
 alter table Peliculas add constraint fk_Peliculas_Distribuidoras foreign key (idDistribuidor) references Distribuidoras (idDistribuidor);
