@@ -4,6 +4,11 @@ esto es un comentarioo
 */
 
 
+--En el curso vamos a trabajar con oracle19c, de esta forma es como se ve la 
+--versión con la que se está trabajando. 
+SELECT * FROM v$version;
+
+
 --DDL: Data Definition Language.  Create, alter y drop. 
 --DCL: Data control Language. Grant, deny y revoke. 
 --DML: Data Manipulation Language. Select, insert, update y delete. 
@@ -646,17 +651,35 @@ RENAME emp TO emp_vieja;
 -- el nombre de las columnas y no las filas insertadas anteriormente. 
 CREATE TABLE emp AS SELECT * FROM emp_vieja where emp_no = 123456;
 
-
+select * from dept;
 -- temas2. teoría. 
 INSERT ALL
 INTO DEPT VALUES (50, 'INFORMATICA', 'GETAFE')
 INTO DEPT VALUES (60, 'I+D', 'ALICANTE')
 SELECT * FROM DUAL;
 
+INSERT INTO DEPT VALUES
+((SELECT MAX(DEPT_NO) + 1 FROM DEPT), '@@@@', '@@@@');
+INSERT INTO DEPT VALUES
+((SELECT MAX(DEPT_NO) + 1 FROM DEPT), '????', '????');
+INSERT INTO DEPT VALUES
+((SELECT MAX(DEPT_NO) + 1 FROM DEPT), '####', '####');
+
+
+select * from emp;
+-- esto es para usar las variables de sustitución. 
+select * from emp where upper (oficio) = upper ('&dato');
+-- recordar que las variables de sustitución, pueden completar consultas también.
+-- oficio='ANALISTA'
+select * from emp where &miCondicion;
+-- en el caso de & & nos vale para el dato nos lo pida solamente una vez en toda la sesión, de forma que el valor
+-- que pongamos, es el que se va a establacer de forma automática para la siguiente ejecución. 
+select emp_no, &&campo1 from emp where &campo1 = '&dato';
+
 
 -- estas sonsultas devuelven resutados distintos. Como conepto las dos son lo mismo "inner join" lo que pasa es que en el natural join, no se
 -- devuelve las dos columnas de dept_no, si no que sólo se devuelve una. Específicamente lo que hace el natural join es coger las columnas 
--- en las qué esté la lave foranea para usar esa columna para hacer el inner. 
+-- en las qué esté la llave foranea para usar esa columna para hacer el inner. 
 select * from emp inner join dept on emp.dept_no = dept.dept_no;
 select * from emp natural join dept;
 
@@ -685,6 +708,13 @@ select * from plantilla where turno = 'T' and funcion = 'ENFERMERA';
 -- esta muestra el uso de la palabra reservada minus. Explicación, lo que hace en este caso es restar las filas que han salido de la segunda consulta. 
 select * from plantilla where turno = 'T' minus select * from plantilla where funcion = 'ENFERMERA';
 
+-- esto se usa para cambiar la contraseña de un usuario. 
+ALTER USER SYSTEM IDENTIFIED BY oracle2;
+
+-- de esta forma se modifican las columnas de una tabla: 
+select * from emp;
+describe emp;
+alter table emp modify (comision NUMBER(20));
 
 --- Tema 2. Ejercicos 1. Colegios.
 ---tabla de profesores. 
@@ -836,7 +866,16 @@ select * from user_tables;
 SELECT TABLE_NAME FROM USER_TABLES;
 --- comentario sobre una tabla. 
 comment on table emp  is ' esto es un comentario de prueba';
+comment on table emp  is ' esto es un comentario de prueba 2';
+-- esto se usa para acceder a los comentarios de las tablas que son del usuario. 
 select table_name, comments from user_tab_comments where table_name = 'EMP';
+-- esto es para los comentarios de todas las tablas a las que tiene acceso . 
+select * from ALL_TAB_COMMENTS;
+select * from ALL_TAB_COMMENTS where TABLE_NAME='EMP';
+select * from prueba;
+select * from ALL_TAB_COMMENTS where TABLE_NAME='PRUEBA';
+-- esto es para ver todas las tablas de la BBDD. 
+select * from ALL_TABLES;
 
 
 --9/4/2025  ejercicios de SQL.   Consultas con funcioes. Tema 2. Ejercicios 2. 
@@ -993,12 +1032,7 @@ truncate table prueba;
 
 insert into prueba values (1, 'abcdefghij', 'aeiou', 3.14);
 
-comment on table prueba is 'esto es un comentario de la taba prueba';
-select * from USER_TAB_COMMENTS;
-select * from USER_TAB_COMMENTS where TABLE_NAME='PRUEBA';
-select * from ALL_TAB_COMMENTS where TABLE_NAME='PRUEBA';
-select * from USER_TABLES;
-select * from ALL_TABLES;
+
 --- con esto se muestra lo que le pertenece a ese usuario. 
 SELECT DISTINCT OBJECT_TYPE  FROM  USER_OBJECTS;
 select * from cat;
@@ -1035,6 +1069,9 @@ select * from emp;
 ---------------------++++++------++---+++++
 ---------------------++++++------++---+++++
 ---------------------++++++------++---+++++
+
+
+
 
 
 

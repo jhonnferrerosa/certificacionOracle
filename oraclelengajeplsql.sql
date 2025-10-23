@@ -1,4 +1,5 @@
 
+
 SELECT * from dept;
 select * from emp;
 select * from enfermo;
