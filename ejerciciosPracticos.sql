@@ -674,10 +674,17 @@ select * from emp where upper (oficio) = upper ('&dato');
 select * from emp where &miCondicion;
 -- en el caso de & & nos vale para el dato nos lo pida solamente una vez en toda la sesión, de forma que el valor
 -- que pongamos, es el que se va a establacer de forma automática para la siguiente ejecución. 
-select emp_no, &&campo1 from emp where &campo1 = '&dato';
+select emp_no, &&campo1, apellido from emp where &campo1 = '&dato';
+select emp_no, &&campo3, apellido from emp where &campo4 = '&dato';
+-- esto es pare verificar el valor que toman las vriables de sustitución. 
+set verify on;
+-- en mi caso , esto es lo que ha sacado la BBDD: indicando el antiguo y el nuevo. 
+SQL> select * from emp where upper (oficio) = upper ('&dato');
+--Introduzca un valor para dato: DIRECTOR
+--antiguo   1: select * from emp where upper (oficio) = upper ('&dato')
+--nuevo   1: select * from emp where upper (oficio) = upper ('DIRECTOR')
 
-
--- estas sonsultas devuelven resutados distintos. Como conepto las dos son lo mismo "inner join" lo que pasa es que en el natural join, no se
+-- estas consultas devuelven resutados distintos. Como conepto las dos son lo mismo "inner join" lo que pasa es que en el natural join, no se
 -- devuelve las dos columnas de dept_no, si no que sólo se devuelve una. Específicamente lo que hace el natural join es coger las columnas 
 -- en las qué esté la llave foranea para usar esa columna para hacer el inner. 
 select * from emp inner join dept on emp.dept_no = dept.dept_no;
@@ -685,7 +692,6 @@ select * from emp natural join dept;
 
 -- en este otro caso el using nos vale para determinar la columna por la que se va a hacer el inner join de las dos tablas. 
 SELECT * from emp inner join dept using (dept_no);
-
 
 -- esto es para hacer la recuperación jerarquica. Explicación, eso es una forma en la que dentro de una misma tabla (en este ejemplo la tabla emp)
 -- se establece un jerarquía entre las propias filas, de tal forma que usando dos columnas se establece quien es más prioritatio/dependedinte de
@@ -715,6 +721,11 @@ ALTER USER SYSTEM IDENTIFIED BY oracle2;
 select * from emp;
 describe emp;
 alter table emp modify (comision NUMBER(20));
+
+--Tener en cuenta que hay tres tipos de restricciones en las tablas: bajo, medio y alto nivel. 
+--bajo:  restricciones de tipo de dato y de si se permite NULL o no. 
+--medio: Primary key, Foreign key, Unique, check. 
+--alto: triggers.
 
 --- Tema 2. Ejercicos 1. Colegios.
 ---tabla de profesores. 
@@ -983,7 +994,7 @@ select to_char (sysdate, 'dd-MM-YYYY') from dual;
 select to_char (sysdate, 'day" "dd" de "month" del "YYYY') as fechaDeHoy from dual;
 select to_char (sysdate, 'day" "dd" de "month" del "YYYY', 'nls_date_language = ITALIAN') from dual;
 
---3   Queremos cambiar el departamento de Barcelona y llevarlo a Tabarnia. Para ello tenemos que saber qué empleados cambiarían de localidad y cuáles no.  
+--3   Queremos cambiar el departamento de Barcelona y llevarlo a Tabarnia. Para ello tenemos que saber qué empleados cambiaría de localidad y cuáles no.  
 --Combinar tablas y mostrar el nombre del departamento junto a los datos del empleado.1
 select * from emp inner join dept on emp.dept_no = dept.dept_no;
 select emp_no, loc from emp inner join dept on emp.dept_no = dept.dept_no;
