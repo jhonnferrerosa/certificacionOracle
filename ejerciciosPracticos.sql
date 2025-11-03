@@ -1081,15 +1081,17 @@ select * from emp;
 ---------------------++++++------++---+++++
 ---------------------++++++------++---+++++
 
-
-
+drop table alumnos; 
 drop table profesores;
+drop table colegios;
+drop table regiones;
+
 create table profesores (
     cod_profe varchar2(3),
-    nombre varchar2(60),
+    nombre varchar2(60) not null,
     apellido1 varchar2(50),
     apellido2 varchar2(50),
-    dni varchar2(9),
+    dni varchar2(9) unique,
     localidad varchar2 (50),
     provincia varchar2(50), 
     salario number, 
@@ -1099,10 +1101,20 @@ create table profesores (
     fecha_nacimiento date
 );
 
-drop table slumnos; 
+create table colegios(
+    cod_colegio number,
+    nombre varchar2(20) not null,
+    localidad varchar2(15),
+    provincia varchar2(15),
+    anyo_construccion date,
+    coste_constuccion number, 
+    cod_region number, 
+    unico number unique
+);
+
 create table alumnos (
     dni varchar2(9),
-    nombre varchar2(50),
+    nombre varchar2(50) not null,
     apellidos varchar2(50),
     fecha_ingreso date,
     fecha_nac date, 
@@ -1114,24 +1126,52 @@ create table alumnos (
     direccion varchar2(1000)
 );
 
-drop table colegios;
-create table colegios(
-    cod_colegio number,
-    nombre varchar2(20),
-    localidad varchar2(15),
-    provincia varchar2(15),
-    anyo_construccion date,
-    coste_constuccion number, 
-    cod_region number, 
-    unico number
-);
-
-
-drop table regiones;
 create table regiones(
     cod_region number,
-    regiones varchar2(20)
+    regiones varchar2(20) not null
 );
+
+---aquí van las restricciones de clave primaria. 
+alter table profesores add constraint pk_cod_profe primary key (cod_profe);
+alter table colegios add constraint pk_cod_colegio primary key (cod_colegio);
+alter table alumnos add constraint pk_dni primary key (dni);
+alter table regiones add constraint pk_cod_region primary key (cod_region);
+
+--aquí van a ir las restricciones de clave foranea. 
+alter table profesores add constraint fktablaprofesores foreign key (cod_colegio) references  colegios (cod_colegio);  
+alter table alumnos add constraint fktablaalumnos foreign key (cod_colegio) references colegios (cod_colegio);
+alter table colegios add constraint fktablacolegios foreign key (cod_region) references regiones (cod_region);
+
+--aquí van las restricciones de check.
+alter table profesores add  constraint checktablaprofesorescolumnadni check (dni = '_________'); 
+
+--datos de prueba para la BBDD: 
+insert into regiones values (1,'Madrid');
+insert into regiones values (2,'Castilla leon');
+insert into regiones values (3,'Valencia');
+
+insert into colegios values (10, 'ignacio de loyola', 'vilalba', 'Madrid', '02-05-1994', 123456, 1, 10);
+insert into colegios values (11, 'los angeles', 'vilalba', 'Madrid', '02-05-1994', 123456, 1, 11);
+insert into colegios values (12, 'peñalar', 'vilalba', 'Madrid', '02-05-1994', 123456, 1, 12);
+insert into colegios values (13, 'susana', 'vilalba', 'Madrid', '02-05-1994', 123456, 2, 13);
+insert into colegios values (14, 'vinasco', 'vilalba', 'Madrid', '02-05-1994', 123456, 2, 14);
+insert into colegios values (15, 'diego velazquez', 'vilalba', 'Madrid', '02-05-1994', 123456, 2, 15);
+insert into colegios values (16, 'encinar', 'vilalba', 'Madrid', '02-05-1994', 123456, 3, 16);
+insert into colegios values (17, 'UAX', 'vilalba', 'Madrid', '02-05-1994', 123456, 3, 17);
+insert into colegios values (18, 'UNED', 'vilalba', 'Madrid', '02-05-1994', 123456, 3, 18);
+
+INSERT INTO profesores VALUES 
+('100', 'Juan', 'García', 'López', '12345678A', 'Madrid', 'Madrid', 35000, 10, 'H', 'Soltero',  '02-05-1994');
+INSERT INTO profesores VALUES 
+('101', 'Pedro', 'García', 'López', null, 'Madrid', 'Madrid', 35000, 10, 'H', 'Soltero',  '02-05-1994');
+INSERT INTO profesores VALUES 
+('102', 'Pablo', 'García', 'López', NULL, 'Madrid', 'Madrid', 35000, 10, 'H', 'Soltero',  '02-05-1994');
+INSERT INTO profesores VALUES 
+('103', 'Fernando', 'García', 'López', 'asdf', 'Madrid', 'Madrid', 35000, 10, 'H', 'Soltero',  '02-05-1994');
+
+INSERT INTO alumnos 
+VALUES ('48888888A', 'Laura', 'González Martínez', DATE '2023-09-15', DATE '2005-03-20', 'Madrid', 'Madrid', 100, 'Femenino', 'Soltero', 'Calle Alcalá 123, 4ºB');
+
 
 
 

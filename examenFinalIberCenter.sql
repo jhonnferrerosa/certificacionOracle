@@ -220,3 +220,9 @@ execute storeProcedureMiProcedimiento;
 ---------------------++++++------++---+++++
 
 
+select * from regiones;
+select * from colegios;
+select * from profesores;
+select * from alumnos;
+
+
