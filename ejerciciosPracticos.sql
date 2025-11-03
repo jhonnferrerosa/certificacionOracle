@@ -1083,6 +1083,57 @@ select * from emp;
 
 
 
+drop table profesores;
+create table profesores (
+    cod_profe varchar2(3),
+    nombre varchar2(60),
+    apellido1 varchar2(50),
+    apellido2 varchar2(50),
+    dni varchar2(9),
+    localidad varchar2 (50),
+    provincia varchar2(50), 
+    salario number, 
+    cod_colegio number, 
+    sexo varchar2(1), 
+    estadocivil varchar(20), 
+    fecha_nacimiento date
+);
+
+drop table slumnos; 
+create table alumnos (
+    dni varchar2(9),
+    nombre varchar2(50),
+    apellidos varchar2(50),
+    fecha_ingreso date,
+    fecha_nac date, 
+    localidad varchar2(15),
+    provincia varchar2(15),
+    cod_colegio number, 
+    sexo varchar2(20),
+    estadocivil varchar2(20), 
+    direccion varchar2(1000)
+);
+
+drop table colegios;
+create table colegios(
+    cod_colegio number,
+    nombre varchar2(20),
+    localidad varchar2(15),
+    provincia varchar2(15),
+    anyo_construccion date,
+    coste_constuccion number, 
+    cod_region number, 
+    unico number
+);
+
+
+drop table regiones;
+create table regiones(
+    cod_region number,
+    regiones varchar2(20)
+);
+
+
 
 
 
