@@ -224,5 +224,25 @@ select * from regiones;
 select * from colegios;
 select * from profesores;
 select * from alumnos;
+delete from colegios where cod_colegio = 10;
+delete from alumnos;
+select * from emp;
+select * from emp where dept_no = 30;
+select * from emp where dept_no = 5538490;
+select * from emp where oficio = 'VENDEDOR';
+select * from dept;
+select * from emp_comision;
+
+
+delete from dept where dept_no = 30;
+update dept set dept_no = 5538490 where dept_no = 30;
+
+select object_name from user_objects where object_type = 'TRIGGER';
+
+
+
+
+
+
 
 

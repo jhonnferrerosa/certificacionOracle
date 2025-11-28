@@ -51,7 +51,7 @@ BEGIN
   v_guid := 333;
   DBMS_OUTPUT.PUT_LINE('Identificador único generado: ' || v_guid);
 END;
-/
+
 
 declare
 BEGIN
@@ -60,14 +60,15 @@ end;
 
 
 --- esto es la creación de las tablas únicamente con la clave primaria como restricción. 
-DROP TABLE DEPT;
+
 DROP TABLE EMP;
-DROP TABLE HOSPITAL;
+DROP TABLE DEPT;
 DROP TABLE SALA;
 DROP TABLE DOCTOR;
 DROP TABLE PLANTILLA;
 DROP TABLE ENFERMO;
 DROP TABLE OCUPACION;
+DROP TABLE HOSPITAL;
 
 
 -- +-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -173,7 +174,7 @@ insert into hospital values(18,'general','Atocha s/n','595-3111',987);
 insert into hospital values(22,'la paz','castellana 1000','923-5411',412);
 insert into hospital values(45,'san carlos','ciudad universitaria','597-1500',845);
 insert into hospital values(17,'ruber','juan bravo 49','914027100',217);
-/
+
 insert into sala values(19,3,'cuidados intensivos',21);
 insert into sala values(19,6,'psiquiatria',67);
 insert into sala values(18,3,'cuidados intensivos',10);
@@ -187,7 +188,7 @@ insert into sala values(45,2,'maternidad',24);
 insert into sala values(17,2,'maternidad',19);
 insert into sala values(17,6,'psiquiatria',20);
 insert into sala values(17,3,'cuidados intensivos',21);
-/
+
 insert into plantilla values(19,6,3754,'diaz b.','ENFERMERO','T',226200);
 insert into plantilla values(19,6,3106,'hernandez j.','ENFERMERO','T',275500);
 insert into plantilla values(18,4,6357,'karplus w.','INTERINO','T',337900);
@@ -202,7 +203,6 @@ insert into plantilla values(17,2,8519,'chuko c.','ENFERMERO','T',252200);
 insert into plantilla values(17,6,8520,'palomo c.','INTERINO','M',219210);
 insert into plantilla values(17,6,8521,'cortes v.','ENFERMERA','N',221200);
 
-/
 insert into doctor values(19,435,'Lopez A.','Cardiologia',350000);
 insert into doctor values(18,585,'Miller G.','Ginecologia',250000);
 insert into doctor values(18,982,'Cajal R','Cardiologia',290000);
@@ -213,7 +213,7 @@ insert into doctor values(45,607,'Niqo P.','Pediatria',240000);
 insert into doctor values(45,522,'Adams C.','Neurologia',450000);
 insert into doctor values(17,521,'Nino P.','Neurologia',390000);
 insert into doctor values(17,120,'Curro F.','Urologia',250000);
-/
+
 INSERT INTO ENFERMO VALUES(10995, 'Languia M.', 'Goya 20', TO_DATE('16-05-1956', 'DD-MM-YYYY'), 'M', 280862482);
 INSERT INTO ENFERMO VALUES(18004, 'Serrano V.', 'Alcala 12', TO_DATE('21-05-1960', 'DD-MM-YYYY'), 'F', 284991452);
 INSERT INTO ENFERMO VALUES(14024, 'Fernandez N.', 'Recoletos 5', TO_DATE('23-07-1967', 'DD-MM-YYYY'), 'F', 321790059);
@@ -224,7 +224,7 @@ INSERT INTO ENFERMO VALUES(59076, 'Miller G.', 'Lopez de Hoyos 2', TO_DATE('16-0
 INSERT INTO ENFERMO VALUES(63827, 'Ruiz P.', 'Esquerdo 103', TO_DATE('26-12-1980', 'DD-MM-YYYY'), 'M', 200973253);
 INSERT INTO ENFERMO VALUES(64882, 'Fraser A.', 'Soto 3', TO_DATE('10-07-1980', 'DD-MM-YYYY'), 'F', 285201776);
 INSERT INTO ENFERMO VALUES(74835, 'Benitez E.', 'Argentina 5', TO_DATE('05-10-1956', 'DD-MM-YYYY'), 'M', 154811767);
-/
+
 INSERT INTO OCUPACION VALUES(10995,19,6,1);
 INSERT INTO OCUPACION VALUES(18004,19,3,2);
 INSERT INTO OCUPACION VALUES(14024,19,6,3);
@@ -234,12 +234,12 @@ INSERT INTO OCUPACION VALUES(39217,22,1,1);
 INSERT INTO OCUPACION VALUES(59076,22,6,2);
 INSERT INTO OCUPACION VALUES(63827,22,6,3);
 INSERT INTO OCUPACION VALUES(64882,22,2,1);
-/
+
 insert into dept values(10,'CONTABILIDAD','SEVILLA');
 insert into dept values(20,'INVESTIGACIÓN','MADRID');
 insert into dept values(30,'VENTAS','BARCELONA');
 insert into dept values(40,'PRODUCCIÓN','GRANADA');
-/
+
 INSERT INTO emp VALUES('7839', 'rey', 'PRESIDENTE', NULL, TO_DATE('17-11-1995', 'DD-MM-YYYY'), 650000, NULL, 10);
 INSERT INTO emp VALUES('7698', 'negro', 'DIRECTOR', 7839, TO_DATE('01-05-1995', 'DD-MM-YYYY'), 370500, 0, 30);
 INSERT INTO emp VALUES('7566', 'jimenez', 'DIRECTOR', 7839, TO_DATE('02-04-1995', 'DD-MM-YYYY'), 386750, 0, 20);
@@ -577,7 +577,8 @@ select * from doctor;
 select max (salario), oficio from emp group by oficio; 
 select max (salario), min (salario), avg(salario), count (emp_no),  oficio from emp group by oficio; 
 select max (salario), min (salario), avg(salario), count (emp_no),  oficio from emp group by oficio union select max (salario), min (salario), avg(salario), count (empleado_no),  funcion from plantilla group by funcion;
-select max (salario), min (salario), avg(salario), count (emp_no),  oficio from emp group by oficio union select max (salario), min (salario), avg(salario), count (empleado_no),  funcion from plantilla group by funcion union select max (salario), min (salario), avg(salario), count (doctor_no),  especialidad from doctor group by especialidad;
+select max (salario), min (salario), avg(salario), count (emp_no),  oficio from emp group by oficio union select max (salario), min (salario), avg(salario), count (empleado_no),  funcion from plantilla group by funcion 
+union select max (salario), min (salario), avg(salario), count (doctor_no),  especialidad from doctor group by especialidad;
 
 --- TEMA 1. ejercicios 5. CONSULTAS DE ACCION. 
 --1
@@ -727,364 +728,12 @@ alter table emp modify (comision NUMBER(20));
 --medio: Primary key, Foreign key, Unique, check. 
 --alto: triggers.
 
---- Tema 2. Ejercicos 1. Colegios.
----tabla de profesores. 
-
-DROP TABLE regiones;
-DROP TABLE colegios;
-DROP TABLE profesores;
-DROP TABLE alumnos;
-
-CREATE TABLE regiones
-  (cod_region integer,
-  regiones VARCHAR2(20)
-);
-
-CREATE TABLE colegios
-  (cod_colegio integer,
-  nombre VARCHAR2(20),
-  localidad VARCHAR2(15),
-  provincia VARCHAR2 (15),
-  ano_construccion date,   
-  coste_onstruccion integer,
-  cod_region integer,
-  unico integer
-);
-
-CREATE TABLE profesores
-  (cod_profe VARCHAR2(3),
-  nombre VARCHAR2(60),
-  apellido1 VARCHAR2(50),
-  apellido2 VARCHAR2(50),
-  dni VARCHAR2 (9),
-  edad integer,
-  localidad VARCHAR2 (50),
-  provincia VARCHAR2 (50),
-  salario integer,
-  cod_colegio integer
-);
-
-CREATE TABLE alumnos
-  (dni VARCHAR2 (9),
-  nombre VARCHAR2(50),
-  apellidos VARCHAR2(50),
-  fecha_ingreso date,
-  fecha_nac date,
-  localidad VARCHAR2 (15),
-  provincia VARCHAR2 (30),
-  cod_colegio integer
-);
-
-create sequence seq_colegios increment by 1 start with 1;
-create sequence seq_regiones increment by 1 start with 1000;
-
-select * from regiones;
-select * from colegios;
-select * from profesores;
-select * from alumnos;
-
----claves primarias. 
-alter table regiones add constraint pk_regiones primary key (cod_region); 
-alter table colegios add constraint pk_colegios primary key (cod_colegio);
-alter table profesores add constraint pk_profesores primary key (cod_profe);
-alter table alumnos add constraint pk_alumnos primary key (dni);
-
--- claves foraneas.
-alter table colegios add constraint fk_colegios_regiones foreign key (cod_region) references regiones (cod_region);
-alter table profesores add constraint fk_profesores_colegios foreign key (cod_colegio) references colegios (cod_colegio);
-alter table alumnos add constraint fk_alumnos_colegios foreign key (cod_colegio) references colegios (cod_colegio);
-
---- valores únicos. 
-alter table profesores add constraint unique_profesores_dni unique  (dni);
-alter table profesores add constraint ch_profesores_dni_validacionpropiadni check (dni = '_________'); 
-alter table colegios add constraint unique_colegios_unico unique  (unico);
-
---2 Añadir el campo Sexo, Fecha de nacimiento y Estado Civil a la tabla Profesores.
-alter table profesores add (sexo VARCHAR2(1));
-alter table profesores add (direccion VARCHAR2(100));
-alter table profesores add (fecha_nacimiento VARCHAR2(20));
-
---3. eliminar l edad de los profesores. 
-alter table profesores drop column edad;
-
---4.  Añadir el campo Sexo, Dirección y Estado Civil a la tabla Alumnos.
-alter table profesores add (estado_civil VARCHAR2(20));
-
---5.Borrar la relación existente entre la tabla profesores y Colegios.
-alter table profesores drop constraint fk_profesores_colegios;
-
---6.  Crear de nuevo la relación borrada en el ejercicio anterior que tenga eliminación en cascada.
-alter table profesores add constraint fk_profesores_colegios foreign key (cod_colegio) references colegios (cod_colegio) on delete cascade;
-
---7. Agregar un valor por defecto con la fecha actual al campo Fecha_Ingreso de la tabla alumnos.
-alter table alumnos modify (fecha_ingreso date default '26-03-2025');
---jhonjames.practica:  aquí voy a porbar que se establezca esa fecha por defecto, para eso tengo que insertar primero en regiones, 
---- después colegios y finalmente en alumnos. 
-insert into regiones values (seq_regiones.nextVal, 'Madrid. ');
-insert into colegios values (seq_colegios.nextVal, 'los ángeles', 'Villalba.', 'Madrid. ', '2-04-1994',123, 1022, 789);
---- esto es para ver el valor actual de la secuencia. 
-select seq_colegios.currval as siguiente from dual;
-insert into alumnos values ('123456789', 'jhon', 'ferre', '26-03-2025', 'torrelodones. ', 'Madrid', 21);
-INSERT INTO alumnos (dni, nombre, apellidos, fecha_nac, localidad, provincia, cod_colegio)VALUES ('123456789', 'jhon', 'ferre', TO_DATE('26-03-2025', 'DD-MM-YYYY'), 'torrelodones', 'Madrid', 21);
-
---8. 
-INSERT INTO regiones (cod_region, regiones) VALUES (seq_regiones.nextval, 'Andalucía');
-INSERT INTO regiones (cod_region, regiones) VALUES (seq_regiones.nextval, 'Cataluña');
-INSERT INTO regiones (cod_region, regiones) VALUES (seq_regiones.nextval, 'Madrid');
-select * from regiones;
-
-INSERT INTO colegios (cod_colegio, nombre, localidad, provincia, ano_construccion, coste_onstruccion, cod_region, unico)
-VALUES (seq_colegios.nextval, 'Colegio Santa María', 'Madrid', 'Madrid', TO_DATE('1980-09-01', 'YYYY-MM-DD'), 2500000, 1022, 777);
-INSERT INTO colegios (cod_colegio, nombre, localidad, provincia, ano_construccion, coste_onstruccion, cod_region, unico)
-VALUES (seq_colegios.nextval, 'Colegio Media', 'Alicante', 'Alicante', TO_DATE('1995-03-15', 'YYYY-MM-DD'), 1800000, 1023, 778);
-INSERT INTO colegios (cod_colegio, nombre, localidad, provincia, ano_construccion, coste_onstruccion, cod_region, unico)
-VALUES (seq_colegios.nextval, 'Colegio Mont', 'Barcelona', 'Barcelona', TO_DATE('2005-11-20', 'YYYY-MM-DD'), 3000000, 1024, 779);
-select * from colegios;
-
-INSERT INTO alumnos (dni, nombre, apellidos, fecha_nac, localidad, provincia, cod_colegio)
-VALUES ('11111111A', 'Ana', 'Ortiz Ortega', TO_DATE('2005-01-15', 'YYYY-MM-DD'), 'Madrid', 'Madrid', 21);
-INSERT INTO alumnos (dni, nombre, apellidos, fecha_nac, localidad, provincia, cod_colegio)
-VALUES ('22222222B', 'Javier', 'Chuko Palomo', TO_DATE('2006-05-20', 'YYYY-MM-DD'), 'Arenalesl', 'Alicante', 21);
-INSERT INTO alumnos (dni, nombre, apellidos, fecha_nac, localidad, provincia, cod_colegio)
-VALUES ('33333333C', 'Miguel', 'Torres Tormo', TO_DATE('2007-11-10', 'YYYY-MM-DD'), 'Llobregat', 'Barcelona', 21);
-
-INSERT INTO alumnos (dni, nombre, apellidos, fecha_nac, localidad, provincia, cod_colegio)
-VALUES ('11111111d', 'Ana', 'Ortiz Ortega', TO_DATE('2005-01-15', 'YYYY-MM-DD'), 'Madrid', 'Madrid', 23);
-INSERT INTO alumnos (dni, nombre, apellidos,  fecha_nac, localidad, provincia, cod_colegio)
-VALUES ('22222222e', 'Javier', 'Chuko Palomo', TO_DATE('2006-05-20', 'YYYY-MM-DD'), 'Arenalesl', 'Alicante', 23);
-INSERT INTO alumnos (dni, nombre, apellidos,  fecha_nac, localidad, provincia, cod_colegio)
-VALUES ('33333333f', 'Miguel', 'Torres Tormo',  TO_DATE('2007-11-10', 'YYYY-MM-DD'), 'Llobregat', 'Barcelona', 23);
-
-INSERT INTO alumnos (dni, nombre, apellidos, fecha_nac, localidad, provincia, cod_colegio)
-VALUES ('11111111g', 'Ana', 'Ortiz Ortega', TO_DATE('2005-01-15', 'YYYY-MM-DD'), 'Madrid', 'Madrid', 25);
-INSERT INTO alumnos (dni, nombre, apellidos,  fecha_nac, localidad, provincia, cod_colegio)
-VALUES ('22222222h', 'Javier', 'Chuko Palomo', TO_DATE('2006-05-20', 'YYYY-MM-DD'), 'Arenalesl', 'Alicante', 25);
-INSERT INTO alumnos (dni, nombre, apellidos,  fecha_nac, localidad, provincia, cod_colegio)
-VALUES ('33333333i', 'Miguel', 'Torres Tormo',  TO_DATE('2007-11-10', 'YYYY-MM-DD'), 'Llobregat', 'Barcelona', 25);
-
-select * from alumnos;
-
---- 9. 
-delete from regiones;
--- no deja borrar nada de la tabla regiones.  porque colegios tiene una forenea de regiones. 
--- para solucionarlo habria que borrar todos los colegios.
-
-
--- Tema 0. Clases de otro profesor llamado Juan. 
--- Esto es para ver todas las tablas que tiene ese usuario. 
-select * from user_tables;
--- este es lo mismo que el anterior, pero más concreto ya que realmente lo que más importa es el nombre de las tablas de lo que queremos saber. 
-SELECT TABLE_NAME FROM USER_TABLES;
---- comentario sobre una tabla. 
-comment on table emp  is ' esto es un comentario de prueba';
-comment on table emp  is ' esto es un comentario de prueba 2';
--- esto se usa para acceder a los comentarios de las tablas que son del usuario. 
-select table_name, comments from user_tab_comments where table_name = 'EMP';
--- esto es para los comentarios de todas las tablas a las que tiene acceso . 
-select * from ALL_TAB_COMMENTS;
-select * from ALL_TAB_COMMENTS where TABLE_NAME='EMP';
-select * from prueba;
-select * from ALL_TAB_COMMENTS where TABLE_NAME='PRUEBA';
--- esto es para ver todas las tablas de la BBDD. 
-select * from ALL_TABLES;
-
-
---9/4/2025  ejercicios de SQL.   Consultas con funcioes. Tema 2. Ejercicios 2. 
-select * from emp;
-select * from emp where oficio = 'ANALISTA';
-select * from emp where LOWER(oficio) = 'analista';
---estamos poniendo valores estatios:   analista. 
--- tambien podriamos incluir valores dinámicos , por lo que tendríamos que convertir las dos comparaciones. 
-select * from emp where upper (oficio) = upper ('&dato');
--- esta la posibilidad de concatenr textos en una sola columna.   con este carcter:  |||  
-select apellido || oficio as descripcionapellidooficio from emp;
--- el initcap  hace que se muestre la primera letra en mayusculas. 
-select apellido from emp;
-select initcap(apellido) as oficioconmayuscula from emp;
-select initcap(apellido || '' || oficio) from emp;
-select concat ('Nuestro empleado es... ', apellido) from emp;
---- el substr    extrae una cadena de carateres
-select * from emp;
-select * from dual;
-select substr ('florero', 1, 4) as dato from dual;
-select substr ('abcdefg', 4, 2) as dato from dual;
-select substr ('florero', 4) as dato from dual;
-select * from emp where apellido like 's%';
-select * from emp where apellido like 's%a';
-select * from emp where apellido like 's??a';
-select * from emp where apellido like 's__a';
-select substr (apellido, 1, 1) as unaletra from emp;
----  este es más eficiente que LIKE. 
-select * from emp where substr (apellido, 1, 1) = 's';
-select length('libro') from dual;
----mostrar los apellidos que tengan sólo 4 letras. 
-select * from emp where apellido like '____';
---  este es más eficiente. 
-select * from emp where length(apellido) = 4;
---- te dice el infice en el que esta ese caracter o texto dentro de la columna. 
-select instr ('benito', 'n') from dual;
-select * from dual where instr ('hola@gmail.com', '@') > 0;
-select lpad (dept_no, 5, '$') from emp;
-select rpad (dept_no, 5, '$') from emp;
-select round (3.1415, 2) from dual;
-select round (3.9415) from dual;
-select trunc (3.9415) from dual;
--- resto, averiguar si el número es par.
-SELECT MOD(99, 2) FROM dual;
-SELECT MOD(88, 2) FROM dual;
---mostrar empledos cuto salario sea par. 
-select * from emp;
-SELECt * FROM emp where mod (salario, 2) = 0;
-SELECt * FROM emp where mod (emp_no, 2) = 1;
-select sysdate from dual;
-select sysdate + 10 from dual;
-SELECT TO_DATE('08/04/25', 'DD/MM/RR') + 10 FROM DUAL;
-SELECT TO_DATE('08/04/2025', 'DD/MM/YYYY') + 10 FROM DUAL;
-SELECT Apellido, MONTHS_BETWEEN(SYSDATE,fecha_alt) as Meses FROM emp;
---agrega N  meses a la fecha que le digamos. 
-select  add_months (sysdate, 5) from dual;
-SELECT  NEXT_DAY(sysdate,'LUNES') FROM dual;
-SELECT  NEXT_DAY(sysdate,2) FROM dual;
-SELECT Apellido, Fecha_alt, LAST_DAY(fecha_alt) as "Último día del mes" FROM EMP;
---empleados redondeados la fecha al mes. 
-select apellido, fecha_alt, round(fecha_alt, 'MM')  from emp;
-select apellido, fecha_alt, trunc(fecha_alt, 'YY')  from emp;
---- Con esto se puede hacer el CAST a los datos. 
-SELECT FECHA_ALT,TO_CHAR (FECHA_ALT, 'DD=MM=YYYY') as FORMATO from emp;
-SELECT FECHA_ALT,TO_CHAR (FECHA_ALT, 'YYYY=DD=MM') as FORMATO from emp;
---formato a números.
-select to_char (7458, '0000L') as zero from dual;
-select to_char (7458, '0000$') as zero from dual;
-select to_char (sysdate, 'HH24:MI:SS') from dual;
--- si queremos incluir texto entre to_char y los formatos, se realiza con "" dentrode las simples. 
-select to_char (sysdate, '"Hoy es "DD" de "month" de "YEAR') from dual;
---funciones de conversion. 
-select '08/04/2025' from dual;
-select to_date('08/04/2025') + 2 from dual;
-select '12' + 2 from dual;
-select to_number('12') + 2 from dual;
---funciones generales. 
----NVL  sirve para evitar los NULL y sustituirlo. 
-select * from emp;
-select apellido, salario, comision from emp;
---- podemos hacer que en vez de que se quede NULL, que se escriba otro valor. 
-select apellido, salario + nvl(comision,0)  as totalsalriocomision from emp;
----DECODE es solo de la BBDD de Oracle, que funciona igual que el CASE. 
---mostrar el turno en palabra de mañana tarde noche de la plantilla. 
-select * from plantilla;
--- en el caso de que se encuentre un valor de la tabla al que no se asocie entonces eso es para los casos 
--- en los que no se defina nada. 
-select apellido, decode (turno, 'M', 'mañana', 'N', 'noche', 'T', 'tarde', 'no se he definido') as turno from plantilla;
--- quiero saber la fecha del proximo miercles que juega el Madrid. 
-select next_day (sysdate, 'miércoles') from dual;
-select next_day (sysdate, 'miércoles') from dual;
-select to_char (next_day (sysdate, 'miércoles'), '"el dia "DD " juega el Madrid"') from dual;
-select to_char (next_day(next_day (sysdate, 'miércoles')), '"el dia "DD " juega el Madrid"') from dual;
--- la clausula distinct. se utiliza para el select. Elimina repetidos de la consulta. 
---- mostrar el oficio de los empleados. 
-select distinct oficio from emp;
-
---1.  Mostrar todos los apellidos de los empleados en Mayúsculas
-select * from emp;
-select upper(apellido) from emp;
-
---2 Construir una consulta para que salga la fecha de hoy con el siguiente formato:
-select to_char (sysdate, 'HH24:MI:SS') from dual;
-select to_char (sysdate, 'dd-MM-YYYY') from dual;
-select to_char (sysdate, 'day" "dd" de "month" del "YYYY') as fechaDeHoy from dual;
-select to_char (sysdate, 'day" "dd" de "month" del "YYYY', 'nls_date_language = ITALIAN') from dual;
-
---3   Queremos cambiar el departamento de Barcelona y llevarlo a Tabarnia. Para ello tenemos que saber qué empleados cambiaría de localidad y cuáles no.  
---Combinar tablas y mostrar el nombre del departamento junto a los datos del empleado.1
-select * from emp inner join dept on emp.dept_no = dept.dept_no;
-select emp_no, loc from emp inner join dept on emp.dept_no = dept.dept_no;
-select emp_no, decode (loc, 'BARCELONA', 'se va a aTabarria', 'No se cambia de localidad') from emp inner join dept on emp.dept_no = dept.dept_no;
-
---4 Mirar la fecha de alta del presidente. Visualizar todos los empleados dados de alta 330 días antes que el presidente. 
-select * from emp;
-select emp_no, oficio, fecha_alt  from emp;
-select emp_no, oficio, fecha_alt, to_date ('17/11/05') - fecha_alt  from emp;
-select emp_no, oficio, fecha_alt  from emp where fecha_alt <=  (select FECHA_ALT from emp where oficio = 'PRESIDENTE') - 330;
-
---5 Nos piden un informe como este:  ??? no entiendo el ejercicio. 
-select * from emp;
-select rpad(apellido, 13, '.'), rpad(oficio, 13, '.'), rpad (salario, 13, '.'), rpad(dept_no, 13, '.') from emp;
-
----6 Nos piden otro, en el que se muestren todos los empleados de la siguiente manera:
-select * from emp;
-select apellido, fecha_alt from emp;
-select to_char (sysdate, '"Hoy es "DD" de "month" de "YEAR') from dual;
-select to_char (sysdate, '"este es el día:   "DD') from emp;
-select 'el señor  ' || initcap(apellido) || ' con cargo '  || initcap(oficio) || ' se dio de alta el ' || to_char (fecha_alt, 'day"  " dd " de " month " del " YYYY') || ' en la empresa' as titulo from emp;
-
-
------Más pruebas con la BBDD. 
-create table prueba (identificador integer, texto10 varchar2(10), textoChar char(5));
-
-describe prueba;
-insert into prueba values (1, 'abcdefghij', 'aeiou');
-insert into prueba values (2, 'aaaaaaaaaa', 'aeiou');
-insert into prueba values (1, 'abcdefghijholaaaa', 'aeiou');
-select * from prueba;
-rollback;
-drop table prueba;
--- despues de los ALTER TSBLE o DROP TABLE.  ya no funcionan los rollback. 
---alter table prueba add (nuevaColumna varchar(3) not null); 
-alter table prueba add (nuevaColumna varchar(3)); 
--- esta no va a adminir NULL. 
-alter table prueba add (nuevaColumnaSinNull varchar(7) not null); 
-alter table prueba drop column nuevaColumna;
-alter table prueba modify (nuevaColumna float);
-rename prueba to prueba2;
-rename prueba2 to prueba;
-select * from prueba2;
--- en el caso de yo quiera eliminar registros de la forma más rápida, se haría con truncate. 
-truncate table prueba;
-
-insert into prueba values (1, 'abcdefghij', 'aeiou', 3.14);
-
-
---- con esto se muestra lo que le pertenece a ese usuario. 
-SELECT DISTINCT OBJECT_TYPE  FROM  USER_OBJECTS;
-select * from cat;
-
---añadimos una nueva columna llamada TEST. 
-alter table prueba add (test int);
--- añadimos otra COL, pero con valores por defecto. 
-alter table prueba add (testColumna2 int default -1);
-insert into prueba (identificador, texto10, textochar) values (3, 'aa', 'bb');
-insert into prueba (identificador, texto10, textochar, testColumna2) values (3, 'aa', 'bb', 555);
-insert into prueba (identificador, texto10, textochar, testColumna2) values (4, 'cc', 'cc', null);
-select * from prueba;
-
--- todas las restricciones del usuario .
-select * from user_constraints;
-
--- este e un ejemplo de update. 
-update emp set salario = -1 where emp_no = 7782;
-select * from emp;
-
-
-
----------------------++++++------++---+++++
----------------------++++++------++---+++++
----------------------++++++------++---+++++
----------------------++++++------++---+++++
----------------------++++++------++---+++++
----------------------++++++------++---+++++
----------------------++++++------++---+++++
----------------------++++++------++---+++++
---PRUEBAS
----------------------++++++------++---+++++
----------------------++++++------++---+++++
----------------------++++++------++---+++++
----------------------++++++------++---+++++
----------------------++++++------++---+++++
-
+--- Tema 2. Ejercicos 1. Base de datos: Colegios.
 drop table alumnos; 
 drop table profesores;
 drop table colegios;
 drop table regiones;
+drop sequence seq_colegios;
 
 create table profesores (
     cod_profe varchar2(3),
@@ -1116,7 +765,7 @@ create table alumnos (
     dni varchar2(9),
     nombre varchar2(50) not null,
     apellidos varchar2(50),
-    fecha_ingreso date,
+    fecha_ingreso date default '03-05-1994',
     fecha_nac date, 
     localidad varchar2(15),
     provincia varchar2(15),
@@ -1131,6 +780,8 @@ create table regiones(
     regiones varchar2(20) not null
 );
 
+create sequence seq_colegios increment by 1 start with 22;
+
 ---aquí van las restricciones de clave primaria. 
 alter table profesores add constraint pk_cod_profe primary key (cod_profe);
 alter table colegios add constraint pk_cod_colegio primary key (cod_colegio);
@@ -1143,22 +794,51 @@ alter table alumnos add constraint fktablaalumnos foreign key (cod_colegio) refe
 alter table colegios add constraint fktablacolegios foreign key (cod_region) references regiones (cod_region);
 
 --aquí van las restricciones de check.
-alter table profesores add  constraint checktablaprofesorescolumnadni check (dni = '_________'); 
+alter table profesores add  constraint checktablaprofesorescolumnadni check (dni like '_________'); 
+
+--ejercicio 1º: 
+--Este ya está hecho con lo que está dibujado en el modelo relacional. 
+
+--Ejercicio 2º:
+--Este ya está hecho con lo que está dibujado en el modelo relacional. 
+
+--Ejercicio 3º: 
+--Este ya está hecho con lo que está dibujado en el modelo relacional. 
+
+--Ejercicio 4º: 
+--Este ya está hecho con lo que está dibujado en el modelo relacional. 
+
+--Ejercicio 5º: 
+alter table profesores drop constraint fktablaprofesores;
+
+--Ejercicio 6: 
+alter table profesores add constraint fktablaprofesores foreign key (cod_colegio) references  colegios (cod_colegio)
+on delete cascade; 
+
+--Ejercicio 7: 
+-- este lo he resuelto en la creación de las tablas, ya que me parecía interesante el poner el defeault directamente en la declaración 
+-- de los atributos, en vez de hacer un alter table, como típicamente se hace, de todas formas, dejo aquí el ejemplo. 
+-- alter table alumnos modify (fecha_ingreso date default '02-05-1994');
+
+--ejercicio 8: 
+-- en esta parte no la voy a realizar como pone en el ejercicio, si no que estos datos que están debajo, son los que van a ser de prueba. 
+
+--ejercicio 9:  borrar la tabla regiones. 
 
 --datos de prueba para la BBDD: 
 insert into regiones values (1,'Madrid');
 insert into regiones values (2,'Castilla leon');
 insert into regiones values (3,'Valencia');
 
-insert into colegios values (10, 'ignacio de loyola', 'vilalba', 'Madrid', '02-05-1994', 123456, 1, 10);
-insert into colegios values (11, 'los angeles', 'vilalba', 'Madrid', '02-05-1994', 123456, 1, 11);
-insert into colegios values (12, 'peñalar', 'vilalba', 'Madrid', '02-05-1994', 123456, 1, 12);
-insert into colegios values (13, 'susana', 'vilalba', 'Madrid', '02-05-1994', 123456, 2, 13);
-insert into colegios values (14, 'vinasco', 'vilalba', 'Madrid', '02-05-1994', 123456, 2, 14);
-insert into colegios values (15, 'diego velazquez', 'vilalba', 'Madrid', '02-05-1994', 123456, 2, 15);
-insert into colegios values (16, 'encinar', 'vilalba', 'Madrid', '02-05-1994', 123456, 3, 16);
-insert into colegios values (17, 'UAX', 'vilalba', 'Madrid', '02-05-1994', 123456, 3, 17);
-insert into colegios values (18, 'UNED', 'vilalba', 'Madrid', '02-05-1994', 123456, 3, 18);
+insert into colegios values (seq_colegios.nextval, 'ignacio de loyola', 'vilalba', 'Madrid', '02-05-1994', 123456, 1, 10);
+insert into colegios values (seq_colegios.nextval, 'los angeles', 'vilalba', 'Madrid', '02-05-1994', 123456, 1, 11);
+insert into colegios values (seq_colegios.nextval, 'peñalar', 'vilalba', 'Madrid', '02-05-1994', 123456, 1, 12);
+insert into colegios values (seq_colegios.nextval, 'susana', 'vilalba', 'Madrid', '02-05-1994', 123456, 2, 13);
+insert into colegios values (seq_colegios.nextval, 'vinasco', 'vilalba', 'Madrid', '02-05-1994', 123456, 2, 14);
+insert into colegios values (seq_colegios.nextval, 'diego velazquez', 'vilalba', 'Madrid', '02-05-1994', 123456, 2, 15);
+insert into colegios values (seq_colegios.nextval, 'encinar', 'vilalba', 'Madrid', '02-05-1994', 123456, 3, 16);
+insert into colegios values (seq_colegios.nextval, 'UAX', 'vilalba', 'Madrid', '02-05-1994', 123456, 3, 17);
+insert into colegios values (seq_colegios.nextval, 'UNED', 'vilalba', 'Madrid', '02-05-1994', 123456, 3, 18);
 
 INSERT INTO profesores VALUES 
 ('100', 'Juan', 'García', 'López', '12345678A', 'Madrid', 'Madrid', 35000, 10, 'H', 'Soltero',  '02-05-1994');
@@ -1169,9 +849,225 @@ INSERT INTO profesores VALUES
 INSERT INTO profesores VALUES 
 ('103', 'Fernando', 'García', 'López', 'asdf', 'Madrid', 'Madrid', 35000, 10, 'H', 'Soltero',  '02-05-1994');
 
-INSERT INTO alumnos 
-VALUES ('48888888A', 'Laura', 'González Martínez', DATE '2023-09-15', DATE '2005-03-20', 'Madrid', 'Madrid', 100, 'Femenino', 'Soltero', 'Calle Alcalá 123, 4ºB');
+INSERT INTO alumnos (dni, nombre, apellidos, fecha_ingreso, fecha_nac,  localidad, provincia, cod_colegio, sexo, estadocivil, direccion)
+VALUES ('48888888A', 'Laura', 'González Martínez', DATE '2023-09-15', DATE '2005-03-20', 'Madrid', 'Madrid', 10, 'Femenino', 'Soltero', 'Calle Alcalá 123, 4ºB');
+INSERT INTO alumnos (dni, nombre, apellidos, fecha_nac,  localidad, provincia, cod_colegio, sexo, estadocivil, direccion)
+VALUES ('48888888B', 'Elena', 'González Martínez', DATE '2005-03-20', 'Madrid', 'Madrid', 10, 'Femenino', 'Soltero', 'Calle Alcalá 123, 4ºB');
 
+-- Tema 0. Clases de otro profesor llamado Juan. 
+-- Esto es para ver todas las tablas que tiene ese usuario. 
+select * from user_tables;
+-- este es lo mismo que el anterior, pero más concreto ya que realmente lo que más importa es el nombre de las tablas de lo que queremos saber. 
+SELECT TABLE_NAME FROM USER_TABLES;
+--- comentario sobre una tabla. 
+comment on table emp  is ' esto es un comentario de prueba';
+comment on table emp  is ' esto es un comentario de prueba 2';
+-- esto se usa para acceder a los comentarios de las tablas que son del usuario. 
+select table_name, comments from user_tab_comments where table_name = 'EMP';
+-- esto es para los comentarios de todas las tablas a las que tiene acceso . 
+select * from ALL_TAB_COMMENTS;
+select * from ALL_TAB_COMMENTS where TABLE_NAME='EMP';
+select * from prueba;
+select * from ALL_TAB_COMMENTS where TABLE_NAME='PRUEBA';
+-- esto es para ver todas las tablas de la BBDD. 
+select * from ALL_TABLES;
+
+--9/4/2025   teoría sobre funciones de Oracle. 
+select * from emp;
+select * from emp where oficio = 'ANALISTA';
+select * from emp where LOWER(oficio) = 'analista';
+--estamos poniendo valores estatios:   analista. 
+-- tambien podriamos incluir valores dinámicos , por lo que tendríamos que convertir las dos comparaciones. 
+select * from emp where upper (oficio) = upper ('&dato');
+-- esta la posibilidad de concatenr textos en una sola columna.   con este carcter:  |||  
+select apellido || oficio as descripcionapellidooficio from emp;
+-- el initcap  hace que se muestre la primera letra en mayusculas. 
+select apellido from emp;
+select initcap(apellido) as oficioconmayuscula from emp;
+select initcap(apellido || '' || oficio) from emp;
+select concat ('Nuestro empleado es... ', apellido) from emp;
+--- el substr    extrae una cadena de carateres, en el caso de que el índice sea mayor, entonces no va salair ningna letra. 
+select * from emp;
+select * from dual;
+select substr ('florero', 1, 4) as dato from dual;
+select substr ('abcdefg', 4, 2) as dato from dual;
+-- en este caso como el segundo valor numérico no está escrito, entonces el número que se interpreta es infinito. 
+select substr ('florero', 4) as dato from dual;
+select substr ('florero', 4,100) as dato from dual;
+select * from emp where apellido like 's%';
+select * from emp where apellido like 's%a';
+select * from emp where apellido like 's??a';
+select * from emp where apellido like 's__a';
+select substr (apellido, 1, 1) as unaletra from emp;
+---  este es más eficiente que LIKE. 
+select * from emp where substr (apellido, 1, 1) = 's';
+select length('libro') from dual;
+---mostrar los apellidos que tengan sólo 4 letras. 
+select * from emp where apellido like '____';
+--  este es más eficiente. 
+select * from emp where length(apellido) = 4;
+--- te dice el infice en el que esta ese caracter o texto dentro de la columna. 
+select instr ('benito', 'n') from dual;
+select * from dual where instr ('hola@gmail.com', '@') > 0;
+-- lo que hace esto es rellenar con el caracter que tú determines, la cantidad de campos que tú determines. 
+select lpad (dept_no, 5, '$') from emp;
+select rpad (dept_no, 5, '$') from emp;
+-- en el caso de que no se poga la cadena por la que se remplaza, entonces se considera que se rellena con espacios. 
+select lpad (dept_no, 5) from emp;
+select round (3.1415, 2) from dual;
+select round (3.9415) from dual;
+select trunc (3.9415) from dual;
+-- resto, averiguar si el número es par.
+SELECT MOD(99, 2) FROM dual;
+SELECT MOD(88, 2) FROM dual;
+--mostrar empledos cuto salario sea par. 
+select * from emp;
+SELECt * FROM emp where mod (salario, 2) = 0;
+SELECt * FROM emp where mod (emp_no, 2) = 1;
+select sysdate from dual;
+select sysdate + 10 from dual;
+SELECT TO_DATE('08/04/25', 'DD/MM/RR') + 10 FROM DUAL;
+SELECT TO_DATE('08/04/2025', 'DD/MM/YYYY') + 10 FROM DUAL;
+SELECT Apellido, MONTHS_BETWEEN(SYSDATE,fecha_alt) as Meses FROM emp;
+--agrega N  meses a la fecha que le digamos. 
+select  add_months (sysdate, 5) from dual;
+SELECT  NEXT_DAY(sysdate,'LUNES') FROM dual;
+SELECT  NEXT_DAY(sysdate,2) FROM dual;
+-- devuelve el último día de mes de esa fecha. 
+SELECT Apellido, Fecha_alt, LAST_DAY(fecha_alt) as "Último día del mes" FROM EMP;
+--empleados redondeados la fecha al mes. 
+select apellido, fecha_alt, round(fecha_alt, 'MM')  from emp;
+select apellido, fecha_alt, trunc(fecha_alt, 'YY')  from emp;
+--- Con esto se puede hacer el CAST a los datos. 
+SELECT FECHA_ALT,TO_CHAR (FECHA_ALT, 'DD=MM=YYYY') as FORMATO from emp;
+SELECT FECHA_ALT,TO_CHAR (FECHA_ALT, 'YYYY=DD=MM') as FORMATO from emp;
+--formato a números.
+select to_char (7458, '0000L') as zero from dual;
+select to_char (7458, '0000$') as zero from dual;
+-- con 9 se representa la cantidad extra de nímeros con  espacios. 
+select to_char (7458, '999999') as zero from dual;
+-- con 0 se representa la cantidad extra de nímeros con ceros a la izquierda. 
+select to_char (7458, '000000') as zero from dual;
+select to_char (7458, '000000.000') as zero from dual;
+SELECT SALARIO, TO_CHAR(SALARIO/166.386,'9,999,999.999L') AS "SALARIOS EN EUROS" FROM EMP;
+select to_char (sysdate, 'HH24:MI:SS') from dual;
+-- si queremos incluir texto entre to_char y los formatos, se realiza con "" dentrode las simples. 
+select to_char (sysdate, '"Hoy es "DD" de "month" de "YEAR') from dual;
+--funciones de conversion. 
+select to_char(sysdate) from dual;
+select to_date('08/04/2025') + 2 from dual;
+select '12' + 2 from dual;
+select to_number('12') + 2 from dual;
+--funciones generales. 
+---NVL  sirve para evitar los NULL y sustituirlo. 
+select * from emp;
+select apellido, salario, comision from emp;
+--- podemos hacer que en vez de que se quede NULL, que se escriba otro valor. 
+select apellido, salario + nvl(comision,0)  as totalsalriocomision from emp;
+---DECODE es solo de la BBDD de Oracle, que funciona igual que el CASE. 
+--mostrar el turno en palabra de mañana tarde noche de la plantilla. 
+select * from plantilla;
+-- en el caso de que se encuentre un valor de la tabla al que no se asocie entonces eso es para los casos 
+-- en los que no se defina nada. 
+select apellido, decode (turno, 'M', 'mañana', 'N', 'noche', 'T', 'tarde', 'no se he definido') as turno from plantilla;
+-- quiero saber la fecha del proximo miercles que juega el Madrid. 
+select next_day (sysdate, 'miércoles') from dual;
+select next_day (sysdate, 'miércoles') from dual;
+select to_char (next_day (sysdate, 'miércoles'), '"el dia "DD " juega el Madrid"') from dual;
+select to_char (next_day(next_day (sysdate, 'miércoles')), '"el dia "DD " juega el Madrid"') from dual;
+-- la clausula distinct. se utiliza para el select. Elimina repetidos de la consulta. 
+--- mostrar el oficio de los empleados. 
+select distinct oficio from emp;
+
+
+----ejercicios de SQL.   Consultas con funcioes. Tema 2. Ejercicios 2. 
+--1.  Mostrar todos los apellidos de los empleados en Mayúsculas
+select * from emp;
+select upper(apellido) from emp;
+
+--2 Construir una consulta para que salga la fecha de hoy con el siguiente formato:
+select to_char (sysdate, 'HH24:MI:SS') from dual;
+select to_char (sysdate, 'dd-MM-YYYY') from dual;
+select to_char (sysdate, 'day " " dd " de " month" del " YYYY') as fechaDeHoy from dual;
+select to_char (sysdate, 'day" "dd" de "month" del "YYYY', 'nls_date_language = ITALIAN') from dual;
+
+--3   Queremos cambiar el departamento de Barcelona y llevarlo a Tabarnia. Para ello tenemos que saber qué empleados cambiaría de localidad y cuáles no.  
+--Combinar tablas y mostrar el nombre del departamento junto a los datos del empleado.1
+select * from emp inner join dept on emp.dept_no = dept.dept_no;
+select emp_no, loc from emp inner join dept on emp.dept_no = dept.dept_no;
+select emp_no, decode (loc, 'BARCELONA', 'se va a aTabarria', 'No se cambia de localidad') from emp inner join dept on emp.dept_no = dept.dept_no;
+
+--4 Mirar la fecha de alta del presidente. Visualizar todos los empleados dados de alta 330 días antes que el presidente. 
+select * from emp;
+select emp_no, oficio, fecha_alt  from emp;
+select emp_no, oficio, fecha_alt, to_date ('17/11/05') - fecha_alt  from emp;
+select emp_no, oficio, fecha_alt  from emp where fecha_alt <=  (select FECHA_ALT from emp where oficio = 'PRESIDENTE') - 330;
+
+--5 Nos piden un informe como este. 
+select * from emp;
+select rpad(apellido, 13, '.'), rpad(oficio, 13, '.'), rpad (salario, 13, '.'), rpad(dept_no, 13, '.') from emp;
+
+---6 Nos piden otro, en el que se muestren todos los empleados de la siguiente manera:
+select * from emp;
+select apellido, fecha_alt from emp;
+select to_char (sysdate, '"Hoy es "DD" de "month" de "YEAR') from dual;
+select to_char (sysdate, '"este es el día:   "DD') from emp;
+select 'el señor  ' || initcap(apellido) || ' con cargo '  || initcap(oficio) || ' se dió de alta el ' || to_char (fecha_alt, 'day"  " dd " de " month " del " YYYY') || ' en la empresa' as titulo from emp;
+
+
+-----Más pruebas con la BBDD. 
+create table prueba (identificador integer, texto10 varchar2(10), textoChar char(5));
+
+describe prueba;
+insert into prueba values (1, 'abcdefghij', 'aeiou');
+insert into prueba values (2, 'aaaaaaaaaa', 'aeiou');
+insert into prueba values (1, 'abcdefghijholaaaa', 'aeiou');
+select * from prueba;
+rollback;
+drop table prueba;
+-- despues de los ALTER TSBLE o DROP TABLE.  ya no funcionan los rollback. 
+--alter table prueba add (nuevaColumna varchar(3) not null); 
+alter table prueba add (nuevaColumna varchar(3)); 
+-- esta no va a adminir NULL. 
+alter table prueba add (nuevaColumnaSinNull varchar(7) not null); 
+alter table prueba drop column nuevaColumna;
+alter table prueba modify (nuevaColumna float);
+rename prueba to prueba2;
+rename prueba2 to prueba;
+select * from prueba2;
+-- en el caso de yo quiera eliminar registros de la forma más rápida, se haría con truncate. 
+truncate table prueba;
+insert into prueba values (1, 'abcdefghij', 'aeiou', 3.14);
+--- con esto se muestra lo que le pertenece a ese usuario. 
+SELECT DISTINCT OBJECT_TYPE  FROM  USER_OBJECTS;
+select * from cat;
+--añadimos una nueva columna llamada TEST. 
+alter table prueba add (test int);
+-- añadimos otra COL, pero con valores por defecto. 
+alter table prueba add (testColumna2 int default -1);
+insert into prueba (identificador, texto10, textochar) values (3, 'aa', 'bb');
+insert into prueba (identificador, texto10, textochar, testColumna2) values (3, 'aa', 'bb', 555);
+insert into prueba (identificador, texto10, textochar, testColumna2) values (4, 'cc', 'cc', null);
+select * from prueba;
+-- todas las restricciones del usuario .
+select * from user_constraints;
+
+
+
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+--PRUEBAS
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
+---------------------++++++------++---+++++
 
 
 

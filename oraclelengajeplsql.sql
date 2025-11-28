@@ -8,6 +8,16 @@ select * from hospital;
 select * from sala;
 select * from plantilla;
 
+---Cuidado porque en PLSQL no se puede imprimir el boolean, es decir, esto no ejecuta: dbms_output.put_line(true);
+
+
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+--- tema1: fundamentos de PLSQL. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+--esto es para que se activa la salida de mensajes del put_line. 
+set serveroutput on;
+
+
 declare
     miVariable_$# integer := 333;
 BEGIN
@@ -23,8 +33,6 @@ end;
 UNDEFINE dato;
 UNDEFINE deptno;
 
-SELECT * from dept;
-
 declare 
   v_numero dept.DEPT_NO%TYPE;
   v_nombre dept.dnombre%TYPE;
@@ -38,17 +46,15 @@ BEGIN
   INSERT into dept values (v_numero, v_nombre, v_localidad);
 end;
 
+
 UNDEFINE iddepartamento;
 UNDEFINE nombre;
 UNDEFINE localidad;
 
 --10/4/2025
---ejercicios de sintaxisu 
---2
-INSERT INTO emp VALUES('7839', 'rey', 'PRESIDENTE', NULL, TO_DATE('17-11-2005', 'DD-MM-YYYY'), 650000, NULL, 10);
-
+--ejercicios de sintaxis. Práctica01, fundamentos de PLSQL. 
+--2: 
 SELECT * from emp;
-
 DECLARE
   v_empno emp.emp_no%TYPE;
 BEGIN
@@ -56,7 +62,6 @@ BEGIN
   INSERT into emp values (v_empno, 'perez', 'analista', null, sysdate, 2000, null, 10);
 END;
 
-UNDEFINE empno;
 
 --3 
 SELECT * from emp;
@@ -80,7 +85,6 @@ BEGIN
   dbms_output.put_line ('La cantidad de cifras es: ' || length (mistring));
 END;
 
-UNDEFINE mientero;
 
 --5 ya esta hecho. 
 
@@ -89,12 +93,12 @@ UNDEFINE mientero;
 SELECT * from emp;
 SELECT emp_no, nvl (COMISION, 0) from emp;
 --buscar a los empleados que tiene una comisión de más del 5%. 
-SELECT * from emp where nvl(comision,0)/SALARIO > 0.05;
 
 DECLARE 
 BEGIN
-  update emp set SALARIO = SALARIO * 1.05 where nvl(comision,0)/SALARIO < 0.05;
+  update emp set SALARIO = SALARIO * 1.05 where nvl(comision,0)= 0;
 end;
+
 
 --7
 DECLARE
@@ -139,10 +143,29 @@ BEGIN
 end;
 
 UNDEFINE numerodeempleado;
---  aquí van  ir las estructuras de control.
+
+
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+--- tema2-Estructuras de control. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
 -- en el texto es en el que tienes que poner las comillas, en el caso de que sea un entero,entonces no hace falta tener las 
 -- comillas, esto a la hora de pedir valores por parámetro, pero lo que pasa es que el usar las comillas para pedir datos, 
 --funciona en los dos tipos de datos. 
+
+
+--probar que pasa con este código en el que el valor de las variable no se establece y entonces toman un valor NULL. 
+declare 
+    num1 number;
+    num2 number; 
+begin
+    if num1 < num2 then
+        dbms_output.put_line ("el segundo es mayor. ");
+    else
+        dbms_output.put_line ("el primero es mayor. ");
+    end if;
+end;
+
+
 
 declare 
   v_minumerouno integer;
@@ -157,8 +180,6 @@ BEGIN
     dbms_output.put_line ('El número es negativo ');
   end if;
 end;
-
-UNDEFINE minumerouno;
 
 
 declare 
@@ -182,7 +203,21 @@ UNDEFINE numero;
 
 
 ---ejemplo número mayor.
---hacer
+declare
+    num1 integer; 
+    num2 integer; 
+begin
+    num1 := &num1;
+    num2 := &num2; 
+    if num1 > num2 then
+        dbms_output.put_line ('el numero 1 es mayor. ');
+    elsif num2 > num1 then
+        dbms_output.put_line ('el número 2 es mayor. ');
+    else
+        dbms_output.put_line ('los dos números son los mismos');
+    end if;
+end;
+
 
 
 ---pedir un número al usuario y decir si es par o impar. 
@@ -201,7 +236,7 @@ end;
 
 -- en el caso de que sea vocal indiarlo, en el caso de que no, es consonante. 
 
-/
+
 declare 
     v_micarater varchar2 (1);
 begin
@@ -213,8 +248,6 @@ begin
         dbms_output.put_line (' es consonante.');
     end if;
 end;
-/
-
 
 
 declare 
@@ -283,34 +316,75 @@ begin
 end;
 
 
---en el caso de que el mes sea enero, el mes sera el trece y le restaremos uno al año. Lo mismo para febrero. 
+--ejercicios de sintaxis. Práctica02. Ejercicio calcular el día de nacimiento de la semana. 
 
 declare
-    v_dia integer; v_mes integer; v_ano integer; v_anoauxiliaruno integer; v_anoauxiliardos integer;
-    v_anoauxiliartres integer; v_auxiliar_sumas_cinco integer;
+    v_dia integer; v_mes integer; v_ano integer;
+    v_mesauxlinaruno integer;
+    v_anoauxiliaruno integer; v_anoauxiliardos integer; v_anoauxiliartres integer; 
+    v_auxiliar_sumas_cinco integer;
+    v_auxiliar_paso_6 integer;
+    v_auxiliar_paso_7 integer; 
 begin
     v_dia := '&dia'; v_mes := '&mes'; v_ano := '&ano';
+    dbms_output.put_line ('Estos son los datos: ' || v_dia || ' - ' || v_mes || ' - ' || v_ano);
     --paso1. 
-    v_mes := (((v_mes+1)*3)/5);
-    dbms_output.put_line (v_mes);
+    v_mesauxlinaruno := (((v_mes+1)*3)/5);
+    dbms_output.put_line ('paso1: '  || v_mesauxlinaruno);
     --paso2. 
     v_anoauxiliaruno := trunc(v_ano/4);
-    dbms_output.put_line (v_anoauxiliaruno);
+    dbms_output.put_line ('paso 2: ' || v_anoauxiliaruno);
     --paso3
     v_anoauxiliardos := trunc (v_ano/100);
-    dbms_output.put_line (v_anoauxiliardos);
+    dbms_output.put_line ('paso 3: ' || v_anoauxiliardos);
     --paso4 
     v_anoauxiliartres := trunc (v_ano/400);
-    dbms_output.put_line (v_anoauxiliartres);
+    dbms_output.put_line ('paso 4: '  || v_anoauxiliartres);
     --paso5.
-    v_auxiliar_sumas_cinco := v_dia + (v_mes * 2) + v_ano + ;
+    v_auxiliar_sumas_cinco := v_dia + (v_mes * 2) + v_ano + v_mesauxlinaruno + v_anoauxiliaruno - v_anoauxiliardos + v_anoauxiliartres + 2;
+    dbms_output.put_line ('paso 5: ' || v_auxiliar_sumas_cinco);
     --paso6.
+    v_auxiliar_paso_6 := trunc (v_auxiliar_sumas_cinco / 7);
+    dbms_output.put_line ('paso 6: ' || v_auxiliar_paso_6);
     --paso7.
+    v_auxiliar_paso_7 := v_auxiliar_sumas_cinco - (v_auxiliar_paso_6*7);
+    dbms_output.put_line ('paso 7: ' || v_auxiliar_paso_7);
     --paso8. 
+    if (v_auxiliar_paso_7 = 0) then
+        dbms_output.put_line ('el día es el sábado. ');
+    else
+        if (v_auxiliar_paso_7 = 1) then
+            dbms_output.put_line ('el día es el domingo. ');
+        else
+            if (v_auxiliar_paso_7 = 2) then
+                dbms_output.put_line ('el día es lunes .');
+            else
+                if (v_auxiliar_paso_7 = 3) then
+                    dbms_output.put_line ('el día es martes. ');
+                else
+                    if (v_auxiliar_paso_7 = 4) then
+                        dbms_output.put_line ('el día es miércoles. ');
+                    else
+                        if (v_auxiliar_paso_7 = 5) then
+                            dbms_output.put_line ('el día es jueves.');
+                        else
+                            if (v_auxiliar_paso_7 = 6) then
+                                dbms_output.put_line (' el día es viernes.');
+                            else
+                                dbms_output.put_line ('No se sabe que día es...');
+                            end if;
+                        end if;
+                    end if;
+                end if;
+            end if;
+        end if;
+    end if; 
 end;
 
 
----  21/4/2025   comenzamos con bucles. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+---  21/4/2025   tema3:bucles. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
 --se va a mostrar la suma de los primeros 100 números. 
 ----  este ejemplo escon un break. 
 declare 
@@ -362,13 +436,13 @@ declare
 begin 
     miSuma := 0;
     goto etiqueta;
+    
     for i in 1..100 loop
-        miSuma := miSuma + i;        
+        miSuma := miSuma + i;  
     end loop;
     <<etiqueta>>
     dbms_output.put_line (miSuma);
 end;
-
 
 ---  uso del NULL 
 declare 
@@ -456,7 +530,6 @@ begin
 end;
 
 ----mostar la tabla de multiplicar dado un número. 
-
 declare 
     miNumero integer;
 begin 
@@ -509,9 +582,9 @@ begin
     end loop;
     dbms_output.put_line ('fin del programa.');
 end;
-
-select * from dept;
-
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+--tema4:cursores. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
 declare 
     v_nombre dept.dnombre%type;
     v_loc dept.loc%type;
@@ -549,6 +622,7 @@ end;
 --explicito. 
 -- puede devolver más de una fila y es necesario declararlo. 
 --mostrar el apellido y el salario de todos los empleados. 
+-- atributos:  %isopen, %notfound, %found, %rowcount,   sql%rowcount(este sólo lo he probado update, delete e insert que para hacer esto no hace falta cursor), 
 select * from emp;
 declare
     v_apellido emp.apellido%type;
@@ -575,7 +649,22 @@ begin
         dbms_output.put_line (v_sal);
     end loop;
 end;
- 
+
+
+-- este ejercicio es lo mismo que el anerior, sólo que con un bucle while. 
+declare
+    miArrayDept dept%rowtype;
+    cursor miCursor is select * from dept;
+begin
+    open miCursor; 
+    -- solamente después del primer fetch es cuando se puede hace el found. 
+    fetch miCursor into miArrayDept;    
+    while (miCursor%found) loop
+        dbms_output.put_line ('este es el valor de dept_no: ' || miArrayDept.DEPT_NO);
+        fetch miCursor into miArrayDept;
+    end loop;
+end;
+
  
 --sql%rowcount también es para consultas de acción. 
 --increemntar en 1 el salario  de los emleados ddel departamento 10. 
@@ -627,16 +716,13 @@ begin
         dbms_output.put_line ('no existe ese deartamento, esto no debería de ejecutarse nunca. ');
     else
         dbms_output.put_line ('si que existe ese dept');
+        update dept set dnombre = v_dnombre, loc =v_loc  where dept_no = v_dept_noleido;
     end if;
     
     exception
         when no_data_found then
             dbms_output.put_line ('el error ha sido not data found, es decir, no se ha encontado ningún registro en la consulta con esos parámetros. ');
 end;
-
-
-
-
 
 
 ----- ejercicio para ver que el IS NULL no fiunciona ni con  XXX%type ni con XXX%rowtype. 
@@ -723,6 +809,7 @@ begin
     close cursoremp;
 end;
 
+
 --código que modifique el salario del empleado arroyo. 
 -- si es epplaedo  cobra más de 250.000  le bajamos el sueldo en 10.000 y en el caso contrario lesubimos a 10.000
 select * from emp;
@@ -762,7 +849,7 @@ select * from doctor inner join hospital on doctor.hospital_cod = hospital.hospi
 select * from doctor inner join hospital on doctor.hospital_cod = hospital.hospital_cod where hospital.nombre = 'la paz';
 select salario from doctor inner join hospital on doctor.hospital_cod = hospital.hospital_cod where hospital.nombre = 'la paz';
 
-/
+
 declare
     cursor cursordoctorhospital is select salario, doctor_no from doctor inner join hospital on doctor.hospital_cod = hospital.hospital_cod where hospital.nombre = 'la paz';
     cursor cursordoctorhospital2 is select salario, doctor_no from doctor inner join hospital on doctor.hospital_cod = hospital.hospital_cod where hospital.nombre = 'la paz';
@@ -794,25 +881,6 @@ begin
         end loop;
     end if;
 end;
-/
-
-
----las subconsultas hay que evitarlas. porque crean dependencias. 
-
----miVariableFilaPrueba doctor%rowtype;
-
-describe dept;
-
-declare
-    --v_id number;
-    v_id dept.dept_no%type;
-    --miVariableFila dept%rowtype;
-    
-begin
-    dbms_output.put_line ('asdf');
-    dbms_output.put_line (v_id);
-
-end;
 
 declare 
     v_fila dept%rowtype;
@@ -828,15 +896,17 @@ begin
     close cursorDepartamento;
 end;
 
--- realizar un cursor para mostrar el apellido, salario y oficio de los empleados. 
-select * from emp;
+
+-- esto es un ejemplo de cursor explícito pero con un bucle for, esto me permite el no tener que hacer el open, el fetch y tampoco el %notfound. 
 declare 
-    cursor miCursorDoctor is select apellido, salario, oficio from emp;
+    miArrayEmp emp%rowtype;
+    cursor miCursor is select * from emp;
 begin
-
+    dbms_output.put_line ('comienza el ejemplo de cursor explícito con el bucle for. ');
+    for i in miCursor loop 
+        dbms_output.put_line ('estos son los datos del empleado: ' || i.emp_no || ' - ' || i.apellido);
+    end loop;
 end;
-
-
 
 declare 
     v number;
@@ -849,28 +919,37 @@ begin
 end;
 
 
----  24/4/2025  control de exceptions. 
---no_data_found
---zero_divide
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+---  24/4/2025  tema5: control de exceptions. ??? que es lo que pasaba con el pragma exception_init , ¿para qué era esto? 
+--al parecer esto vale para establecer códigos de error a las exception que nosotos creemos ¿podría modificar el código elementos
+-- mensaje a una exception que implícita, es decir, que sea predefinida por Oracle? 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+
+
+
+--Tipos de exception más comunes: no_data_found, zero_divide, TOO_MANY_ROWS
 declare
-    miException exception;
     miNumeroUno number := 444;
     miNumeroDos number := 0;
     miNumeroTres number;
 begin
     dbms_output.put_line ('Comienza el programa. ');
     miNumeroTres := miNumeroUno / miNumeroDos;
-    -- esto no se está ejecutando  (1/2). 
+    -- a partir de aquí ya no se ejecuta ya que ha caido en la exception. 
     dbms_output.put_line (miNumeroTres);
-    dbms_output.put_line ('fin del programa. ');
-    -- esto no se está ejecutando (2/2). 
     exception
         when zero_divide then
             dbms_output.put_line ('ha saltado la exception  de dividir por cero. ');
+            dbms_output.put_line (to_char (SQLCODE));
+            dbms_output.put_line (SQLERRM);
 end;
 
+
 --definir una exception.  En el momento en el que los empleados tengan una comisón de Cero, entonces devolver exception. 
--- habra una tabla en la que tenfremos a los que tenga una comision mayor de cero. 
+-- habra una tabla en la que tendremos a los que tenga una comision mayor de cero. 
+-- En este caso de que no se usa PRAGMA  para la especificación de nuestra exception (se estudia más adelante)  lo que pasa es que se 
+--establece un valor por defecto del código SQL y lo mismo para el mensaje, es decir, se ha creado una exception, pero no se le ha dado 
+-- código ni tampoco mensaje de error  con pragma, por lo tanto el código va a ser 1 y el mensje va a ser "User-Defined Exception" 
 select * from emp;
 select   apellido, comision from emp order by comision desc;
 
@@ -892,56 +971,97 @@ begin
     exception
         when miException then
             dbms_output.put_line ('esta es la excption de comision Cero. ');
+            dbms_output.put_line (to_char (SQLCODE));
+            dbms_output.put_line (SQLERRM);
 end;
+
 
 select * from emp_comision;
 select * from dept;
 describe dept;
 
 
--- el pragma, es para que se pueda personaliar los mensajes que devueven las exceptions (ya que siempre tienen algo por defecto). 
+
+--con PRAGMA se puede cambiar el nombre a una exception predeterrminada de Oracle, pero nunca se va a poder personalizar su mensaja de error que se
+-- alamcena en SQLERRM. 
+DECLARE
+    ERROR_NULOS EXCEPTION;
+    PRAGMA EXCEPTION_INIT(ERROR_NULOS,-1400);
+BEGIN
+    INSERT INTO DEPT VALUES (null,'ventas88','MADRID88');
+    COMMIT;
+EXCEPTION
+    WHEN ERROR_NULOS THEN
+    DBMS_OUTPUT.PUT_LINE('UNA COLUMNA NO ADMITE NULOS');
+    dbms_output.put_line (to_char (SQLCODE));
+    dbms_output.put_line (SQLERRM);
+ END;
+
+
+
+-- el pragma también se usa para  personaliar los mensajes que devueven las exceptions creadas por el usuario, esto sólo se puede hacer para las exception
+-- que van desde la    -20.000 hasa la -29.999  todas los códigos que ven desde -19.999 hasta -1, tienen mensajes preestabecidos de Oracle que no se pueden modificar. 
 declare
     miExceptionNulos exception;
-    pragma exception_init (miExceptionNulos, -1400);
+    pragma exception_init (miExceptionNulos, -20001);
 begin
     dbms_output.put_line ('comienza');
     insert into dept values (null, 'departe', 'pragma');
     
     exception
-        when miExceptionNulos then
-            dbms_output.put_line ('No se puede insertar NULL en la tabla. ');
+        when others then
+            if SQLCODE = -1400 then 
+                RAISE_APPLICATION_ERROR (-20001, 'mensaje  de error personalizado: no se puede insertar null en clave primaria');
+            end if;
+        WHEN miExceptionNulos THEN
+            DBMS_OUTPUT.PUT_LINE('🎯 SQLERRM personalizado (-20001): ' || SQLERRM);
 end;
+
+
+--  este ejemplo tiene que ver con el código anterior en el que va a saltar la exception de que no se puede insertar NULL en la clave privada, sólo 
+-- que sacando los menajes de error que tiene Oracle por defecto. 
+declare
+begin
+    dbms_output.put_line ('comienza');
+    insert into dept values (null, 'departe', 'pragma');
+    -- a partir de aquí no se va a ejecutar ya que el código ha creado la exception -1400 (no se puede inserta null en clave primaria) y
+    -- la continuación de la ejecución se va a la parte del exception. 
+    dbms_output.put_line ('fin de la ejecución, esto no se ejecuta. ');
+    -- en este caso se están tendiendo en cuenta TODAS las exception. 
+    exception
+        when others then 
+            dbms_output.put_line ('fin de la ejecución. ');
+            null;
+end;
+
 
 select * from dept;
 declare 
     v_id number;
 begin
     dbms_output.put_line ('comienza');
-    --select dept_no into v_id from dept where dnombre = 'VENTAS';
-    select dept_no into v_id from dept where dnombre = 'VEasdfNTAS';
-    --select dept_no into v_id from dept;
+    select dept_no into v_id from dept;
     exception 
         when TOO_MANY_ROWS then
             dbms_output.put_line ('demasiadas filas en el cursor. ');
-        when others then
-            dbms_output.put_line ('algún error está ocurriendo... ');
-            dbms_output.put_line (to_char (SQLCODE));
-            dbms_output.put_line (SQLERRM);
 end;
-
-
 
 declare 
     v_id number;
 begin
     dbms_output.put_line ('comienza');
     RAISE_APPLICATION_ERROR (-20400, ' esto es un error de aplicacion');
-    dbms_output.put_line ('acaba');
+    dbms_output.put_line ('esto no se llega a ejecutar nunca. ');
 end;
 
+
+
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+--- tema6: procedimientos almacenados. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
 --en los procedieitos no se puede hacer  DROP. 
 --  sp es por Store Procedore. 
-select * from dept;
+drop procedure storeProcedureMiProcedimiento;
 create or replace procedure storeProcedureMiProcedimiento 
 as
 begin 
@@ -952,6 +1072,7 @@ end;
 begin
     storeProcedureMiProcedimiento;
 end;
+
 execute storeProcedureMiProcedimiento;
 
 ---procedieiento con bloque PLSQL. 
@@ -1014,18 +1135,18 @@ END;
 
 create or replace procedure miProcedimientoEjemploTres (parametro_uno number, parametro_dos number)
 as
+    v_division number;
 begin
-    declare 
-        v_division number;
+    dbms_output.put_line ('comeinza miProcedimientoEjemploTres');
     begin
-        v_suma := parametro_uno / parametro_dos;
+        v_division := parametro_uno / parametro_dos;
         dbms_output.put_line (v_division);
         exception 
             when ZERO_DIVIDE then
-                dbms_output.put_line ('miProcedimientoEjemploTres()--- INNER.  error se ha dividido por cero. o ')
+                dbms_output.put_line ('miProcedimientoEjemploTres()--- INNER.  error se ha dividido por cero. o ');
             
     end;
-    dbms_output.put_line ('comeinza miProcedimientoEjemploTres');
+    dbms_output.put_line ('fin  del procedimiento:  miProcedimientoEjemploTres');
     exception 
         when ZERO_DIVIDE then
             dbms_output.put_line ('miProcedimientoEjemploTres()--- OUTER.  error se ha dividido por cero. o ');
@@ -1162,7 +1283,6 @@ begin
     
 end;
 
-
 begin
     sp_insertaDoctorImprimirID ('la paz', 'serraono', 'cirujano', 4000);
 end;
@@ -1198,6 +1318,7 @@ begin
     dbms_output.put_line ('el numero de departamento es:  ' || v_idDepartamento);
 end;
 
+
 declare 
     v number;
 begin
@@ -1206,7 +1327,7 @@ begin
 end;
 
 
---- necesito un pric para incrementar en 1 el salario de los empleados de un deaprtamento. 
+--- necesito un proc para incrementar en 1 el salario de los empleados de un deaprtamento. 
 -- enviaremos al procedimiento el nombre del departamento. 
 
 create or replace procedure sp_incrementar_salario_departamento (p_nombre dept.dnombre%type)
@@ -1221,13 +1342,58 @@ begin
     dbms_output.put_line ('salarios modificados: ' || v_num);
 end;
 
+
 begin
     sp_incrementar_salario_departamento ('ventas');
 end;
 
+-- este es un ejemplo de procedimiento con parámetros opcionales, en este caso el valor de la variable por defecto va a ser 2.  
+create or replace procedure multiplicaNumero (p_numeroA number, p_numeroB number := 2)
+as
+begin
+    dbms_output.put_line ('comienza, multiplicaNumero... ');
+    dbms_output.put_line ('multiplicaNumero... el resultado es: ' || p_numeroA*(p_numeroB);
+end;
+
+
+begin
+    multiplicaNumero (3);
+end;
+
+
+begin
+    multiplicaNumero (3,4);
+end;
+
+-- lo recomendable es dejar los parámetros opcionales al final, para que de esta forma a la hora de llamar al procedimiento almacenado, 
+-- no tengamos que explicar cual es el valor que toma cada uno de nuestros parametros. 
+-- cuidado porque en el caso de que tengamos un parametro opcional en el medio de los parámetros, hay que aclarar que valor es el que va a tener el del medio. 
+create or replace procedure multipicaTresNumeros (pNumeroA number, pNumeroB number := 2, pNumeroC number) 
+as 
+begin
+    dbms_output.put_line ('multipicatresNumeros.... ');
+    dbms_output.put_line ('este es el resultado: ' || pNumeroA*pNumeroB*pNumeroC);
+end;
+
+
+execute multipicaTresNumeros (3, pNumeroC => 4);
+-- este da error. 
+execute multipicaTresNumeros (3, 4);
+
+
+-- esta es la forma para ver la lista de mis procedimientos creados: 
+SELECT object_name, created, last_ddl_time, status
+FROM user_objects 
+WHERE object_type = 'PROCEDURE'
+ORDER BY object_name;
+
+--- en el caso de que un precidimiento tenga un error de creación, por ejemplo "error de sintaxis", con este comando se puede ver el error que tiene ese código. 
+show errors;
 
 --05/05/2025.
----funciones
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+---tema7: funciones
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
 create or replace function f_sumar_numeros (p1 number, p2 number) return number
 as
     v_suma number;
@@ -1255,6 +1421,7 @@ begin
     dbms_output.put_line  ('el resultado de la suma es:    ' || v_resultado_2);
 end;
 
+-- esto es una forma para devolver el resultado en forma de tabla. 
 select f_sumar_numeros (33,33) from dual;
 
 
@@ -1305,29 +1472,40 @@ end;
 
 select sumar_iva (100, 1.21) from dual;
 
---- aqui vamos a las vistas 
+-- esta es la forma para ver la lista de mis funciones  creadas: 
+SELECT object_name, created, last_ddl_time, status
+FROM user_objects 
+WHERE object_type = 'FUNCTION'
+ORDER BY object_name;
+
+
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+--- tema8: vistas. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
 -- quiero una vista para tener todos los datos de los empleados SIN EL SLARIO. 
 create or replace view vistaEmpleados
 as
     select emp_no, apellido from emp;
     
+    
+-- esta es la misma vista, pero sólo con read only, para que la tabla original no pueda ser modificada. 
+create or replace view vistaEmpleados
+as
+    select emp_no, apellido from emp
+with read only;
+    
+delete from vistaEmpleados where emp_no = 7902;
+
+select * from emp;
 select * from  vistaEmpleados;
 
-
 --las vitas simlican las consultas. --
---
---
---
---
---
---
---
 
 create or replace view vistaEmpleadosDepartamentos
 as
     select emp.apellido, emp.emp_no, emp.oficio , dept.dnombre, dept.loc from emp  inner join dept on emp.dept_no = dept.dept_no;
 
-select * from vistaEmpleadosDepartamentos where loc='CADIZ';
+select * from vistaEmpleadosDepartamentos where loc='MADRID';
 
 select * from dept;
 select * from emp;
@@ -1337,7 +1515,6 @@ select * from user_views;
 
 
 --vamos a modificar el salario de los emleados ANALISTA.
---- ver como las vista no modifican los datos de las tblas. 
 select * from emp;
 select * from dept;
 update emp set  salario = salario + 1 where oficio = 'ANALISTA';
@@ -1349,9 +1526,10 @@ delete from vistaEmpleadosDepartamentos where emp_no = 7917;
 insert into vistaEmpleadosDepartamentos values ('perez', 444, 'limpiador','VENTAS', 'MADRID');
 
 
---modiicar el slsario de los emelaados de MADID
+--modiicar el salario de los emelaados de MADID
 --- en  esta parte sí que me esta dando error el moodifcar el salario, en principio al profesor sí que le dejo mofificar el salario. 
---- EXPLICACION.  mirar los apuntes del profesor, porque el devuelve en la vista el salario y por eso sí que de dejamodificarlo. 
+--- EXPLICACION.  mirar los apuntes del profesor, porque el devuelve en la vista el salario y por eso sí que de dejamodificarlo, por lo tanto, 
+-- como en este ejemplo de vista yo no he declarado el acceso al salario, entonces no puedo ni acceder al salario, ni tampoco puedo modificarlo. 
 update vistaEmpleadosDepartamentos set salario = salario + 1 where loc='MADRID';
 select * from vistaEmpleadosDepartamentos where loc='MADRID';
 
@@ -1364,39 +1542,41 @@ select * from vistaEmpleadosDepartamentos where loc='MADRID';
 create or replace view V_VENDEDORES 
 as
     select emp_no, apellido, oficio, salario, dept_no  from emp where oficio = 'VENDEDOR' with check option;
---vamos a mofificar el salario de los vendedores. 
-
+--vamos a mofificar el salario de los vendedores para probar la vista.  
 update V_VENDEDORES set salario = salario + 1;
-update V_VENDEDORES set OFICIO = 'VENDIDOS';
+
+update V_VENDEDORES set salario = salario + 1 where emp_no = 7499;
+--- en este caso esta consulta va a dar eror mediante el check option, ya que está modificando para ese resgistro el creiterio que se le dio en la
+-- creación de l vista. 
+update V_VENDEDORES set oficio = 'vendedores veteranos' where emp_no = 7499;
 select * from V_VENDEDORES;
 
 rollback;
 
+select * from emp;
+update into emp;  
 
--- examenn teoria 10 preguntas tipo TEST. 
-
---- mirar examtopics que hay examnes de certificacion de PLSQL. 
-create or replace procedure procedureNumeroNarcisista (parametroNumero varchar2)
-as
-    auxParametroNumero number;
-    auxNumero number;
-    miNumeroTotal number; 
+declare
+    miNumero number;
 begin
-    dbms_output.put_line ('procedureNumeroNarcisista() --- ');
-    auxParametroNumero := to_number (parametroNumero);
-    for i in 1..length (parametroNumero) loop
-        dbms_output.put_line (substr (parametroNumero, i, 1));
-        auxNumero := to_number (substr (parametroNumero, i, 1));
-        auxNumero := auxNumero + power (substr (parametroNumero, i, 1), lenth)
-    end loop;
+    update  emp  set salario =   777 where emp_no = conseguirClaveEMP;  
 end;
 
-begin
-    procedureNumeroNarcisista ('125');
+create or replace function conseguirClaveEMP return number
+as
+    miVariableNumero number;
+begin 
+    select emp_no into miVariableNumero from emp where emp_no = 7839;
+    commit;
+    return miVariableNumero;
 end;
 
 --6/5/2025. 
--- En este día se dan paquetes. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+-- tema9: paquetes. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+---jhonjames: yo había visto que con los paquetes se podía crear variables globales, es decir, tú creabas un paquete con variables dentro y 
+-- luego tú accedías a esas variables llamando al paquete.
 --- organizar o declaraciion de elementos. 
 --- declaracion de variables. Record. 
 create or replace package paquetePrueba
@@ -1413,9 +1593,11 @@ as
     end;
 end paquetePrueba;
 
+
 begin
     paquetePrueba.mostrarMensaje;
 end;
+
 
 create or replace package paquetedelete
 as
@@ -1424,6 +1606,7 @@ as
     procedure eliminardoctor(p_doctorno doctor.doctor_no%type);
     procedure eliminarenfermo(p_inscripcion enfermo.inscripcion%type);
 end paquetedelete;
+
 
 create or replace package body paquetedelete
 as
@@ -1448,6 +1631,7 @@ as
         delete from enfermo where inscripcion = p_inscripcion;
     end;
 end paquetedelete;
+
 --llamada
 begin
   paquetedelete.eliminaremp(7888);
@@ -1466,6 +1650,7 @@ as
     function diferencia return int;
     procedure llamadaprueba;
 end paquetesalariosemp;
+
 
 create or replace package body paquetesalariosemp
 as
@@ -1500,22 +1685,20 @@ as
     dbms_output.put_line('Diferencia: ' || diferencia);
   end;
 end paquetesalariosemp;
+
 --LLAMADA FUNCIONES
-
-
-
 select paquetesalariosemp.maximosalario as maximo
 , paquetesalariosemp.minimosalario as minimo
 , paquetesalariosemp.diferencia as diferencia from dual;
+
+
 --LLAMADA PROCEDIMIENTO
-
-
 begin
   paquetesalariosemp.llamadaprueba;
 end;
 
 
---un paquete para realuzar update, insert y delete. 
+--un paquete para realizar update, insert y delete. 
 -- todo esto dobre dept. 
 select * from dept;
 create or replace package pk_departamentos
@@ -1524,6 +1707,7 @@ as
     procedure actualizar (p0 dept.dept_no%type,p1 dept.dept_no%type, p2 dept.dnombre%type, p3 dept.loc%type);
     procedure eliminiar (p1 dept.dept_no%type);
 end pk_departamentos;
+
 
 
 create or replace package body pk_departamentos
@@ -1554,13 +1738,14 @@ end pk_departamentos;
 begin
     --pk_departamentos.insertar (101, 'ventas2', 'pamplona');
     --pk_departamentos.actualizar (10, 333, 'ventas2', 'pamplona');
-    pk_departamentos.eliminiar (100);
+    pk_departamentos.eliminiar (101);
 end;
+
 
 -- se pide una funcion que devuelva el apellido , el trabajo el salario y el lugar de trabajo de 
 -- todas las personas de la BBDD. de las tablas dept y hospital 
 --1) el select 
---2) ppnerlo en una vista. 
+--2) ponerlo en una vista. 
 --3) paquete con dos procedimeintos. 
 --3A) procedimitnro para devolver todos los datos en un cursor. 
 --3B) procedimiento para devolver todos los datos en un cursor por salario. 
@@ -1588,12 +1773,13 @@ as
     union
     select doctor.apellido, doctor.especialidad, doctor.salario, hospital.direccion from doctor inner join hospital on doctor.hospital_cod = hospital.hospital_cod;
 
+
 --- hay que ponerlo en una vista para que despues se pueda filtrar por determinados valores de los que devuelva la vista. 
 
 select * from vistaTresTablas;
 
 
----jhonjames. recordar que estos dos procedmientos tiene que estr dentro de un paquete. 
+--Parte 1, voy a poner los procedimientos en fuera de paquetes. 
 create or replace procedure recibirDatosUno
 as
     cursor cursorPrueba is select * from vistaTresTablas;
@@ -1603,9 +1789,11 @@ begin
     end loop;
 end;
 
+
 begin
     recibirDatosUno;
 end;
+
 
 create or replace procedure recibirDatosDos
 as
@@ -1616,15 +1804,45 @@ begin
     end loop;
 end;
 
+
 begin
     recibirDatosDos;
 end;
 
+--Parte 2: voy a poner los procedimientos dentro de un package. 
+create or replace package myPackage_mostrarTodosLosEmpleados
+as
+    procedure mostrarTodosLosEmpleadosParteUno;
+    procedure mostrarTodosLosEmpleadosParteDos;
+end myPackage_mostrarTodosLosEmpleados;
 
 
+create or replace package body myPackage_mostrarTodosLosEmpleados
+as
+    procedure mostrarTodosLosEmpleadosParteUno
+    as 
+        cursor cursorPrueba is select * from vistaTresTablas;
+    begin 
+        for i in cursorPrueba loop
+            dbms_output.put_line ('estos son los datos: ' || i.apellido || ' - ' || i.oficio || ' - ' || i.salario || ' - ' || i.loc);
+        end loop;
+    end;
+    
+    procedure mostrarTodosLosEmpleadosParteDos
+    as
+        cursor cursorPrueba is select * from vistaTresTablas where salario > 200000;
+    begin
+        for i in cursorPrueba loop
+            dbms_output.put_line ('estos son los datos: ' || i.apellido || ' - ' || i.oficio || ' - ' || i.salario || ' - ' || i.loc);
+        end loop;
+    end;
+end myPackage_mostrarTodosLosEmpleados;
 
------
-select * from doctor;
+    
+execute myPackage_mostrarTodosLosEmpleados.mostrarTodosLosEmpleadosParteUno;
+execute myPackage_mostrarTodosLosEmpleados.mostrarTodosLosEmpleadosParteDos;
+
+-----este es un ejemplo de genreación de números RANDOM. 
 select round(dbms_random.value(1,50), 0) from dual;
 
 
@@ -1635,7 +1853,7 @@ select round(dbms_random.value(1,50), 0) from dual;
 --1) doctor con menos de 200.000 incremento aleatorio de 500. 
 --2) doctor entre 200.000 y 300.000 incremento de 300.
 --3) doctor mayor de 300.000 incremento de 50.
---dentro de este paquete tiene uque haber una fuincion y un procedure, la funcion reotorna el RANDOM y el procedure aplica 
+--dentro de este paquete tiene que haber una fuincion y un procedure, la funcion reotorna el RANDOM y el procedure aplica 
 -- los valores random a la columna salario. 
 select * from doctor;
 create or replace package paqueteIncrementosRandom
@@ -1643,6 +1861,7 @@ as
     procedure aumentarSalarioDoctor;
     function generarRandom (parametronNumero number) return number;
 end paqueteIncrementosRandom;
+
 
 create or replace package body paqueteIncrementosRandom
 as
@@ -1677,49 +1896,39 @@ as
 end paqueteIncrementosRandom;
 
 
+
 begin
     --dbms_output.put_line (paqueteIncrementosRandom.generarRandom (750000));
     paqueteIncrementosRandom.aumentarSalarioDoctor;
 end;
 
 
---7/5/2025
-select * from emp;
-update into emp;  
-select * 
 
+-- de esta forma es como se ve todos los paquetes que tiene la base de datos. 
+SELECT object_name, created, last_ddl_time, status
+FROM user_objects 
+WHERE object_type = 'PACKAGE'
+ORDER BY object_name;
 
-declare
-    miNumero number;
-begin
-    update  emp  set salario =   777 where emp_no = conseguirClaveEMP;  
-end;
-
-create or replace function conseguirClaveEMP return number
-as
-    miVariableNumero number;
-begin 
-    select emp_no into miVariableNumero from emp where emp_no = 7839;
-    commit;
-    return miVariableNumero;
-end;
-
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+--- AQUÍ se sedá el tema10 registros. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
 --- el tipo record se suele utilizar para comparir varables entre varios procedimientos. 
 declare
     Type tipoEmpleados is record (
-       	campo1 varchar2 (50), campo2 varchar2 (50), campo3 int
+        campo1 varchar2 (50), campo2 varchar2 (50), campo3 int
     );
-    miArray tipoEmpleados;
+    miEstructura tipoEmpleados;
 begin
-    dbms_output.put_line ('hola, empieza');
-    select apellido, oficio, salario into miArray from emp where emp_no = 7839;
-    dbms_output.put_line (miArray.campo1 || ' - ' || miArray.campo2 || ' - ' || miArray.campo3);
+    dbms_output.put_line ('hola, empieza, ejercicio 1 tema 10.  ');
+    select apellido, oficio, salario into miEstructura from emp where emp_no = 7839;
+    dbms_output.put_line (miEstructura.campo1 || ' - ' || miEstructura.campo2 || ' - ' || miEstructura.campo3);
 end;
 
-
-
---arrays. 
---por ul lado esta la declaracion del tippo. Por otro la variable de dicho tipo. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+-- tema11: arrays. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+--por un lado esta la declaracion del tippo. Por otro la variable de dicho tipo. 
 declare
     -- este es el tipo array. 
     TYPE tablaNumeros is table of number index by binary_integer;
@@ -1731,7 +1940,7 @@ begin
     miArray (2) := 999;
     miArray (3) := 123;
     dbms_output.put_line (miArray(1));
-    for i in 1..length(miArray) loop
+    for i in 1..miArray.count loop
         dbms_output.put_line (miArray(i));
     end loop;
 end;
@@ -1742,17 +1951,39 @@ declare
     miArrayPrueba arrayDeFilas;
 begin
     dbms_output.put_line ('comienza');
-    select * into miArrayPrueba(1) from dept where dept_no = 20;
-    select * into miArrayPrueba(2) from dept where dept_no =30;
-    dbms_output.put_line (miArrayPrueba.prior(2));
+    select * into miArrayPrueba(1) from dept where dept_no = 10;
+    select * into miArrayPrueba(2) from dept where dept_no =20;
+    select * into miArrayPrueba(3) from dept where dept_no =30;
+    -- en este caso el prior devuelve el ínice que existe antes del que se haya solitado, en este caso, 
+    -- el anterior del 2 es el (1). 
+    dbms_output.put_line ('Este es el índice anterior al 2: ' || miArrayPrueba.prior(2));
+    -- en este caso estoy consultando cual es el siguiente índice que se está usando en el array. 
     for i in 1..miArrayPrueba.count loop 
-        dbms_output.put_line (miArrayPrueba(i).dept_no);
+        dbms_output.put_line ('este es dept_no: ' ||miArrayPrueba(i).dept_no || ' y esto dnombre: ' || miArrayPrueba(i).dnombre);
     end loop;
+end;
+
+
+-- este es el mismo ejemplo pero con NEXT. 
+declare
+    type arrayDeFilas is table of dept%rowtype index by binary_integer;
+    miArrayPrueba arrayDeFilas;
+begin
+    dbms_output.put_line ('comienza');
+    select * into miArrayPrueba(1) from dept where dept_no = 10;
+    select * into miArrayPrueba(2) from dept where dept_no =20;
+    -- hay que darse cuenta de que en este caso, lo que estoy haciendo es saltarme los índices 3 y 4. 
+    select * into miArrayPrueba(5) from dept where dept_no =30;
+    -- en este caso el prior devuelve el ínice que existe antes del que se haya solitado, en este caso, 
+    -- el anterior del 2 es el (1). 
+    dbms_output.put_line ('Este es el índice siguiente al 2: ' || miArrayPrueba.next(2));
 end;
 
 --arrays estaticos. 
 declare
     cursor cursorEmpelado is select apellido from emp;
+    --  en este caso aunque se le está diciendo que es de tamaño máximo 20, después para el uso de cada índice, hay que usar la paabra reservada extends.  recordar que
+    -- esto es obligatorio para los varray pero que no es necesario paa los table. 
     type miTipoArrayEstatico is varray (20) of emp.apellido%type;
     miArrayEmpleados miTipoArrayEstatico := miTipoArrayEstatico ();
     contador integer := 0;
@@ -1766,8 +1997,36 @@ begin
     end loop;
 end;
 
+-- este es un ejemplo de un array de estructuras, mezclando conceptos del tema 10 y 11.  
+declare
+    type tipoEmpleado is record (
+        campo1 varchar2 (50), campo2 varchar2 (50), campo3 int
+    );
+    -- en este caso el aray lo loy a hacer con TABLE, ya que me parece más sencillo que el VARRAY. 
+    type miTipoArrayDeRegistros is table of tipoEmpleado index by binary_integer;
+    miArrayDeRegistros miTipoArrayDeRegistros;
+    cursor cursorEmpelado is select apellido, oficio, salario from emp;
+    miEntero integer := 0;
 
---trigers.   after,, before instead of. 
+begin
+    dbms_output.put_line ('hola, empieza, ejercicio 2, tema 10. ');
+    for i in cursorEmpelado loop
+        miEntero := miEntero + 1;
+        miArrayDeRegistros (miEntero).campo1 := i.apellido;
+        miArrayDeRegistros (miEntero).campo2 := i.oficio;
+        miArrayDeRegistros (miEntero).campo3 := i.salario;
+    end loop;
+    
+    dbms_output.put_line ('y aquí están los datos: ');
+    
+    for j in 1..miArrayDeRegistros.count loop
+        dbms_output.put_line ('este es el apellido: ' || miArrayDeRegistros(j).campo1);
+    end loop;
+end;
+
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+---tema12: trigger. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
 select * from dept;
 drop trigger trigger_before_insert_dept;
 create or replace trigger trigger_before_insert_dept
@@ -1780,7 +2039,7 @@ begin
     dbms_output.put_line (:new.dept_no || '  -  ' || :new.dnombre);
 end;
 
-
+--- Esto va a dar ERROR, ya que el :new  y el :old, sólo se puede usar cuando el trigger tiene la sentencia for each row. 
 drop trigger trigger_before_insert_dept;
 create or replace trigger trigger_before_insert_dept
 before insert
@@ -1793,6 +2052,7 @@ end;
 
 INSERT into dept values (555, 'recursos hmanos', 'toledo');
 
+-- este es un ejemplo de uso del WHEN con los trigger. 
 select * from doctor;
 drop trigger trigger_before_update_doctor;
 create or replace trigger trigger_before_update_doctor
@@ -1803,16 +2063,13 @@ for each row
     when (new.salario > 250000)
 declare 
 begin
-    dbms_output.put_line ('trigger_before_update_doctor ()--- ');
-    dbms_output.put_line (:old.apellido || '  -  ' || :new.salario);
+    dbms_output.put_line ('trigger_before_update_doctor ()---  aquí está el nuevo y viejo salario: ');
+    dbms_output.put_line (:old.salario || '  -  ' || :new.salario);
 end;
 
-update doctor set salario = 123456 where doctor_no = 386;
+update doctor set salario = 350000 where doctor_no = 386;
 
--- no podemos tener dos triiger del mismo tipo en una tabla. 
--- cuisdado porque hay triggers que no se pueden hacer dos vaces. 
 select * from dept;
-drop trigger trigger_before_insert_dept_controlBarcelona;
 drop trigger trigger_before_insert_dept_controlBarcelona;
 create or replace trigger trigger_before_insert_dept_controlBarcelona
 before insert
@@ -1823,12 +2080,11 @@ begin
     dbms_output.put_line ('trigger_before_insert_dept_controlBarcelona ()--- ');
     if (upper(:new.loc) = 'BARCELONA') then
         dbms_output.put_line ('No se admiten departamentos de Barcelona. ');
-        raise_application_error (-20003, 'Exception: No se admiten departamentos de Barcelona. ');
+        --raise_application_error (-20003, 'Exception: No se admiten departamentos de Barcelona. ');
     end if;
 end;
 
 -- es mas eficiente usar el WHEN. 
-
 insert into dept values (790, 'ventas333', 'Barcelona');
 
 drop trigger trigger_before_insert_dept_controlLocalidades;
@@ -1841,83 +2097,96 @@ begin
     dbms_output.put_line ('trigger_before_insert_dept_controlLocalidades ()--- ');
     if (upper(:new.loc) = 'BARCELONA') then
         dbms_output.put_line ('No se admiten departamentos de Barcelona. ');
-        raise_application_error (-20003, 'Exception: No se admiten departamentos de Barcelona. ');
+        --raise_application_error (-20003, 'Exception: No se admiten departamentos de Barcelona. ');
     end if;
+end;
+
+-- este es un ejemplo de trigger afer insert. 
+drop trigger trigger_after_insert_dept_controlLocalidades;
+create or replace trigger trigger_after_insert_dept_controlLocalidades
+after insert
+on dept
+for each row
+declare
+begin
+    dbms_output.put_line ('trigger_after_insert_dept_controlLocalidades ()---');
+    dbms_output.put_line ('este es el viejo (que debería de ser NULL): ' || :old.dept_no || ' y este es el nuevo: ' || :new.dept_no); 
 end;
 
 ---8/5/2025
 select * from dept;
 
-drop trigger tr_dept_control_localidades;
-create or replace trigger tr_dept_control_localidades
+-- este es un ejemplo  en el que a parte de usar una variable creada en el trigger, es un ejemplo en 
+-- el que se puede ver el uso de un SELECT dentro deun trigger, ya que esto SÍ se puede hacer cuando 
+-- el trigger es BEFORE INSERT, pero es algo que no se puede hacer cuando es AFTER INSERT (esto se 
+--muestra con el siguiente ejemplo). 
+drop trigger tr_bi_dept_control_localidades;
+create or replace trigger tr_bi_dept_control_localidades
 before insert 
 on DEPT
 for each row
 declare
     v_num number;
 begin
-    dbms_output.put_line('Trigger Control Localidades');
-    select count(DEPT_NO) into v_num from DEPT 
-    where UPPER(LOC)=UPPER(:new.loc);
+    dbms_output.put_line('tr_bi_dept_control_localidades()--- este es el dato insertado: ' || :new.dept_no);
+    dbms_output.put_line ('este es el valor del OLD, el cual debería de ser NULL:   ' || :old.dept_no);
+    select count(DEPT_NO) into v_num from DEPT where UPPER(LOC)=UPPER(:new.loc);
     if (v_num > 0) then
         RAISE_APPLICATION_ERROR(-20001
         , 'Solo un departamento por ciudad ' || :new.LOC);
     end if;
 end;
 
-insert into DEPT values (98634345, 'MILANA', 'TERUEL');
+insert into DEPT values (121, 'MILANA', 'TERUEL');
+insert into DEPT values (122, 'ventas121', 'TERUEL');
+delete from dept where dept_no = '121';
 
 
 
 --- en el caso de que sea AFTER, no se puede hacer consultas sobre las tablas. 
-drop trigger tr_dept_control_localidades;
-create or replace trigger tr_dept_control_localidades
+-- jhonjames: esto da error con after insert ¿pero que pasa con after update? ¿y con before update?
+drop trigger tr_ai_dept_control_localidades;
+create or replace trigger tr_ai_dept_control_localidades
 after insert 
 on DEPT
 for each row
 declare
     v_num number;
 begin
-    dbms_output.put_line('Trigger Control Localidades');
-    select count(DEPT_NO) into v_num from DEPT 
-    where UPPER(LOC)=UPPER(:new.loc);
+    dbms_output.put_line('tr_ai_dept_control_localidades()---');
+    select count(DEPT_NO) into v_num from DEPT where UPPER(LOC)=UPPER(:new.loc);
     if (v_num > 0) then
         RAISE_APPLICATION_ERROR(-20001
         , 'Solo un departamento por ciudad ' || :new.LOC);
     end if;
 end;
 
-select * from dept;
-
-insert into DEPT values (986325, 'MILANA', 'TERUEL');
+insert into DEPT values (121, 'MILANA', 'TERUEL');
 
 
 --- ejemplo de integridad referencial o relacional. 
-
 select * from emp;
 select * from dept;
-drop trigger tr_update_dept_cascade;
-create or replace trigger tr_update_dept_cascade before update on dept for each row
+drop trigger tr_bu_dept_cascade;
+create or replace trigger tr_bu_dept_cascade before update on dept for each row
     when (new.dept_no <> old.dept_no)
 declare
 begin
-    dbms_output.put_line ('tr_update_dept_cascade()---');
+    dbms_output.put_line ('tr_bu_dept_cascade()---');
     update emp set dept_no = :new.dept_no where dept_no = :old.dept_no;
 end;
 update dept set dept_no = 5538490 where dept_no = 30;
 
---- no se puede insertar un nuevo presidente si ya existe en la tabla emp;
----jhonjames:  este trigger ¿no deberia de dar error? ya que siempre hay mas de un presidente en la tabla, por lo 
--- tanto deberia de entrar siempre al error inducido. 
+--- no se puede insertar un nuevo PRESIDENTE si ya existe en la tabla emp;
 select * from emp;
-drop trigger trigger_noAnadirMasDeUnPresidente;
-create or replace trigger trigger_noAnadirMasDeUnPresidente  before insert on emp for each row
+drop trigger trigger_bi_noAnadirMasDeUnPresidente;
+create or replace trigger trigger_bi_noAnadirMasDeUnPresidente  before insert on emp for each row
 declare
     miCantidadPresidentes number;
 begin
-    dbms_output.put_line ('trigger_noAnadirMasDeUnPresidente()---');
+    dbms_output.put_line ('trigger_bi_noAnadirMasDeUnPresidente()---');
     select count (*)into miCantidadPresidentes from emp where oficio = 'PRESIDENTE';
-    if (miCantidadPresidentes >= 1) then
+    if (miCantidadPresidentes >= 1) and (:new.oficio = 'PRESIDENTE')then
         raise_application_error (-20003, 'Exception: No se puede haber más de un presidente. ');
     end if;
 end;
@@ -1928,63 +2197,71 @@ VALUES (8000, 'Gomez', 'PRESIDENTE', NULL, TO_DATE('08-05-2025', 'DD-MM-YYYY'), 
 INSERT INTO EMP (EMP_NO, APELLIDO, OFICIO, DIR, FECHA_ALT, SALARIO, COMISION, DEPT_NO)
 VALUES (8123, 'Gomez', 'PRESIDENTEAAA', NULL, TO_DATE('08-05-2025', 'DD-MM-YYYY'), 600000, NULL, 10);
 
+INSERT INTO EMP (EMP_NO, APELLIDO, OFICIO, DIR, FECHA_ALT, SALARIO, COMISION, DEPT_NO)
+VALUES (8124, 'Gomez', 'PRESIDENTEAAA', NULL, TO_DATE('08-05-2025', 'DD-MM-YYYY'), 600000, NULL, 10);
+
 
 delete  from emp where oficio = 'PRESIDENTE';
-
-
-
-
-
-
 
 ---
 select * from dept;
 
-drop trigger tr_dept_control_localidades;
-create or replace trigger tr_dept_control_localidades
+--este trigger permite que sólo pueda haber una ciudad por cada registro que se inserta en la tabla dept, eso no 
+-- significa que haya sólo un departamento por localidad, si no que sólo se pueda poner un departamento por cada registro,
+-- ya que por ejemplo en el caso de que el departamento de "ventas" se quiera ampliar (dentro de la misma ciudad), esto no se
+-- podría dar, ya que no puedo usar la ciudad dos veces, aunque el departamento sea el mismo "ventas".
+drop trigger tr_bi_dept_control_localidades;
+create or replace trigger tr_bi_dept_control_localidades
 before insert 
 on DEPT
 for each row
 declare
     v_num number;
 begin
-    dbms_output.put_line('Trigger Control Localidades');
-    select count(DEPT_NO) into v_num from DEPT 
-    where UPPER(LOC)=UPPER(:new.loc);
+    dbms_output.put_line('tr_bi_dept_control_localidades()---');
+    select count(DEPT_NO) into v_num from DEPT  where UPPER(LOC)=UPPER(:new.loc);
     if (v_num > 0) then
-        RAISE_APPLICATION_ERROR(-20001
-        , 'Solo un departamento por ciudad ' || :new.LOC);
+        RAISE_APPLICATION_ERROR(-20001, 'Sólo se permite una sola ciudad por cada registro insertado en esta tabla. ' || :new.LOC);
     end if;
 end;
 
+select * from dept;
+insert into dept values (161, 'ventas161', 'MADRID');
 
-drop trigger tr_dept_control_localidades;
-create or replace trigger tr_dept_control_localidades
+-- este trigger hace lo mismo que el anterior, pero con update, por lo tanto es su complemento, es decir, hace falta
+-- que este trigger exista, por que sino va a haber dos registros en la tabla con el mismo nombre de ciudad. 
+--- jhonjames: esto da error, al parecer en esta caso también da el error de "table mutating", de la misma forma 
+-- que el after insert, en el cual no se puede hacerun select dentro del trigger.  
+drop trigger tr_bu_dept_control_localidades;
+create or replace trigger tr_bu_dept_control_localidades
 before update 
 on DEPT
 for each row
 declare
     v_num number;
 begin
-    dbms_output.put_line('Trigger Control Localidades');
-    select count(DEPT_NO) into v_num from DEPT 
-    where UPPER(LOC)=UPPER(:new.loc);
+    dbms_output.put_line('tr_bu_dept_control_localidades()---');
+    select count(DEPT_NO) into v_num from DEPT  where UPPER(LOC)=UPPER(:new.loc);
     if (v_num > 0) then
-        RAISE_APPLICATION_ERROR(-20001
-        , 'Solo un departamento por ciudad ' || :new.LOC);
+        RAISE_APPLICATION_ERROR(-20001, 'Solo un departamento por ciudad ' || :new.LOC);
     end if;
 end;
 
-update dept set loc = 'CADIZ' where DEPT_NO = 20;
+update dept set loc = 'MADRID' where DEPT_NO = 10;
 
-INSERT INTO DEPT (DEPT_NO, DNOMBRE, LOC)
-VALUES (60, 'COMERCIAL', 'CADIZ');
 
 -- ESTE ES EL ORDEN DE EJECUCION DE LOS TRIGGERS 
 -- trigger before
 -- trigger before row
 -- trigger after row
 -- trigger after
+
+-- jhonjames: estos son los tipos de trigger en los que tengo que estudiar el "table is mutating" ya que hay 
+-- algunos en los que da este error y en otros no (recordar que esto es por hacer select dentro del trigger): 
+--before insert
+--after insert
+--before update
+--aferr insert
 
 
 -- primero se necesita un paquete para compaartir las variables. 
@@ -2004,8 +2281,9 @@ as
     end;
 end paqueteTrigger;
 
+--esto es un ejemplo para ver el cómo se puede compartir variables globales entre los diferentes tigger. 
 -- almanenamos al valor de la nueva localidad. 
-drop trigger tr_dept_control_localidades_row;
+drop trigger tr_bu_dept_control_localidades_row;
 create or replace trigger tr_dept_control_localidades_row
 before update 
 on DEPT
@@ -2029,8 +2307,6 @@ begin
 end;
 
 update dept set loc = 'CADIZ' where DEPT_NO = 555;
-
-
 
 -- uso del instead of. 
 select * from dept;
@@ -2074,9 +2350,6 @@ begin
     VALUES (:NEW.EMP_NO, :NEW.APELLIDO, :NEW.OFICIO, :NEW.DIR, :NEW.DEPT_NO, NULL, NULL, NULL);
 end;
 
-
----
-
 select * from doctor;
 select * from hospital;
 create or replace view vistaDoctor 
@@ -2088,7 +2361,7 @@ insert into vistaDoctor values (111, 'casados', 'espialista', 450000, 'provincia
 
 rollback;
 
---jhonjames: el prolama aqui es que no se inseta en la tabla doctor o hospital?
+--jhonjames: el problema aqui es que no se inseta en la tabla doctor o hospital?
 
 create or replace trigger trigger_vistaDoctor
 instead of insert 
@@ -2101,8 +2374,34 @@ begin
     insert into doctor values (v_codigo, :new.doctor_no, :new.apellido, :new.especialidad, :new.salario);
 end;
 
-
 insert into vistaDoctor values (111, 'casados', 'espialista', 450000, 'provincial');
+
+
+--- de esta forma es como se ven todos los trigger que tiene ese (¿usuario?¿base de datos?)
+SELECT object_name, created, last_ddl_time, status
+FROM user_objects 
+WHERE object_type = 'TRIGGER'
+ORDER BY object_name;
+
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+--tema13: sql dinámico. 
+-----+++++++++++++++++++++++++++++++++++++++++++++---------------------------
+create or replace procedure miPruebaSQLinjection (parametroA varchar) as
+    miSting varchar(100) := parametroA;
+begin
+    dbms_output.put_line ('vamos con el PLSL dinámico. ');
+    execute immediate (miSting);
+    dbms_output.put_line (sql%rowcount);
+    dbms_output.put_line ('fin de la ejecución.');
+end;
+
+
+begin
+    miPruebaSQLinjection ('update emp set salario = salario + 10 where dept_no = 10');
+end;
+
+
+select * from emp;
 
 
 
@@ -2215,8 +2514,6 @@ select * from emp;
 select * from emp where dept_no = 10;
 create or replace procedure miPruebaSQLinjection (parametroA varchar) as
     miSting varchar(100) := parametroA;
-    miCantidadDeFlias integer;
-    miRecordDept dept%rowtype;
 begin
     dbms_output.put_line ('vamos con el PLSL dinámico. ');
     execute immediate (miSting);
@@ -2224,9 +2521,12 @@ begin
     dbms_output.put_line ('fin de la ejecución.');
 end;
 
+
 begin
     miPruebaSQLinjection ('update emp set salario = salario + 10 where dept_no = 10');
 end;
+
+
 
 SELECT * FROM v$parameter WHERE name = 'plsql_code_type';
 
