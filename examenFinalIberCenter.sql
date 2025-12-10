@@ -233,8 +233,6 @@ execute storeProcedureMiProcedimiento;
 ---------------------++++++------++---+++++
 ---------------------++++++------++---+++++
 
-
-
 --ver todas la PDB que existen: 
 SELECT name, open_mode FROM v$pdbs;
 
@@ -251,14 +249,9 @@ FROM dual;
 SHOW USER
 SHOW CON_NAME
 
--- de esta forma es como yo me conecto a una PDB específica (tener en cuenta que cuando instalé Oracle, creé una PDB llamada MIORACLEPDB): 
-ALTER SESSION SET CONTAINER = MIORACLEPDB;
-
--- esta es la forma de eliminar una PDB (en este ejemplo se hace con este nombre de PDB: MIORACLEPDB), de la manera en que funciona, es estando desde otra PDB. 
---1º hay que cerrar la conexión. 
-ALTER PLUGGABLE DATABASE MIORACLEPDB CLOSE;
---2º se elimina los datos de la BBDD.
-DROP PLUGGABLE DATABASE MIORACLEPDB INCLUDING DATAFILES;
+-- de esta forma es como yo me conecto a una PDB específica: 
+ALTER SESSION SET CONTAINER = MIORACLEPDBUNO;
+ALTER SESSION SET CONTAINER = MIORACLEPDBDOS;
 
 ----+++++++++++++++++++++++++++
 ----+++++++++++++++++++++++++++
@@ -272,9 +265,12 @@ DROP PLUGGABLE DATABASE MIORACLEPDB INCLUDING DATAFILES;
 sqlplus sys as sysdba
 
 -- PASO2, así se crea la PDB. 
-CREATE PLUGGABLE DATABASE MIORACLEPDB
-    ADMIN USER pdbadmin IDENTIFIED BY Oracle123
-    FILE_NAME_CONVERT = ('pdbseed', 'MIORACLEPDB');
+CREATE PLUGGABLE DATABASE MIORACLEPDBUNO
+    ADMIN USER mipdbadminuno IDENTIFIED BY Oracle123
+    FILE_NAME_CONVERT = ('pdbseed', 'MIORACLEPDBUNO');
+CREATE PLUGGABLE DATABASE MIORACLEPDBDOS
+    ADMIN USER mipdbadmindos IDENTIFIED BY Oracle123
+    FILE_NAME_CONVERT = ('pdbseed', 'MIORACLEPDBDOS');
 	
 	
 --el hecho de crear una nueva PDB, no significa que ya se pueda usar, si no que además hay que abirla, para que de esta forma podamos ejecutar consultas
@@ -283,13 +279,18 @@ CREATE PLUGGABLE DATABASE MIORACLEPDB
 -- en el caso de que sea mounted o closed, habrá que abrirla. 
 SELECT name, open_mode FROM v$pdbs;
 --2º así se abre, de tal forma que el open_mode (o también llamado estado) queda así: READ WRITE 
-ALTER PLUGGABLE DATABASE MIORACLEPDB OPEN;
+ALTER PLUGGABLE DATABASE MIORACLEPDBUNO OPEN;
 ALTER PLUGGABLE DATABASE MIORACLEPDBDOS OPEN;
 --3º para probar que la BBDD ya se puede usar, voy  crear esta tabla y voy a inserta un dato. 
-CREATE TABLE mioraclepdbtabla
+CREATE TABLE mioraclepdbunotabla
   (dni NUMBER(9)
 );
-insert into mioraclepdbtabla values (000000001);
+insert into mioraclepdbunotabla values (000000001);
+
+CREATE TABLE mioraclepdbdostabla
+  (dni NUMBER(9)
+);
+insert into mioraclepdbdostabla values (000000001);
 
 ----+++++++++++++++++++++++++++
 ----+++++++++++++++++++++++++++
@@ -297,10 +298,16 @@ insert into mioraclepdbtabla values (000000001);
 ----+++++++++++++++++++++++++++
 ----+++++++++++++++++++++++++++
 
+--en este punto se explica cómo puedo ekiiminarla: 
+ALTER PLUGGABLE DATABASE MIORACLEPDBUNO CLOSE IMMEDIATE;
+ALTER PLUGGABLE DATABASE MIORACLEPDBDOS CLOSE IMMEDIATE;
+DROP PLUGGABLE DATABASE MIORACLEPDBUNO INCLUDING DATAFILES;
+DROP PLUGGABLE DATABASE MIORACLEPDBDOS INCLUDING DATAFILES;
 
 -- de desa forma es la que se crea un nuevo usuario: 
 create user miusuariouno identified by miusuariounopassword;
 -- de esta forma es como veo todos los usuarios. 
+SELECT USERNAME FROM DBA_USERS ORDER BY USERNAME;
 SELECT USERNAME, ACCOUNT_STATUS, DEFAULT_TABLESPACE FROM DBA_USERS ORDER BY USERNAME;
 
 -- el hecho de que dos usuarios accedan a una misma PDB (base de datos), no significa que los dos puedan ver las tablas que están
@@ -312,7 +319,6 @@ SELECT TABLE_NAME FROM ALL_TABLES order by TABLE_NAME;
 --- con esto veo todas las tablas de todas las bases de datos. 
 SELECT table_name FROM dba_tables  order by table_name;
 
-
 --si yo como usuario sys quiero ver cual es el cotenido de la tabla dept, la consulta tendría que se esta: 
 select * from SYSTEM.dept;
 
@@ -323,7 +329,6 @@ REVOKE SELECT ON DEPT FROM SYS;
 --???? de esta forma le doy todos los permisos. 
 GRANT ALL ON DEPT TO SYS;
 REVOKE ALL ON DEPT TO SYS;
-
 
 --?? ver que desde una nueva PDB no se pueden ver las tablas de otra PDB. 
 
@@ -341,24 +346,11 @@ REVOKE ALL ON DEPT TO SYS;
 
 
 
---??? me estoy dando cuenta de que las PDB nuevas creadas, en el momento que apago y enciendo el ordenador ya cambian su estado de "read write" 
-a "mounted"
+-- me estoy dando cuenta de que las PDB nuevas creadas, en el momento que apago y enciendo el ordenador ya cambian su estado de "read write" 
+--a "mounted"
 
 
-
-
----que accesos entñan permitidos:
---CDB$ROOT...   SYSTEM: si puede ver todas las tablas. SYS: no puede ver las tablas. 
---miOraclePDB(una vez que he entrado con sys para y la he abierto)...: SYSTEM: sí puedo acceder. SYS: Sí puedo acceder. 
---miOraclePDBdos(solamente creada si activar)... SYSTEM: no puedo acceder. SYS: sí puedo acceder. 
-
-
-
-
-
-
-ALTER SESSION SET CONTAINER = MIORACLEPDBDOS;
-ALTER SESSION SET CONTAINER = MIORACLEPDB;
+--cuidado porque dentro de una PDB, no se puede crear otra PDB. ni sys ni SYSTEM. Sól desde CDB. 
 
 
 CREATE TABLE CDB$ROOTtabla
@@ -367,13 +359,10 @@ CREATE TABLE CDB$ROOTtabla
 insert into CDB$ROOTtabla values (000000100);
 insert into CDB$ROOTtabla values (000000101);
 
-
-
 ??? jhonjames: ver  con distintos PDB e inclus con distintos propietarios cual es la diferencia entre  dba_tables y ALL_TABLES
 SELECT owner, table_name FROM dba_tables  WHERE table_name = 'CDB$ROOTTABLA' ORDER BY owner;v
 SELECT OWNER, TABLE_NAME FROM ALL_TABLES WHERE TABLE_NAME = 'CDB$ROOTTABLA';
 SELECT  TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME = 'CDB$ROOTTABLA';
-
 
 
 
