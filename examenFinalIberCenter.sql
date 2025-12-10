@@ -262,7 +262,7 @@ DROP PLUGGABLE DATABASE MIORACLEPDB INCLUDING DATAFILES;
 
 ----+++++++++++++++++++++++++++
 ----+++++++++++++++++++++++++++
--- COMO SE CREA UNA NUEVA PDB Y COMO SE PUEDE USAR.
+-- COMO SE CREA UNA NUEVA PDB Y COMO SE PUEDE USAR. INICIO. 
 ----+++++++++++++++++++++++++++
 ----+++++++++++++++++++++++++++
 -- PASO1. Conéctate como SYS o como SYSTEM. 
@@ -284,6 +284,7 @@ CREATE PLUGGABLE DATABASE MIORACLEPDB
 SELECT name, open_mode FROM v$pdbs;
 --2º así se abre, de tal forma que el open_mode (o también llamado estado) queda así: READ WRITE 
 ALTER PLUGGABLE DATABASE MIORACLEPDB OPEN;
+ALTER PLUGGABLE DATABASE MIORACLEPDBDOS OPEN;
 --3º para probar que la BBDD ya se puede usar, voy  crear esta tabla y voy a inserta un dato. 
 CREATE TABLE mioraclepdbtabla
   (dni NUMBER(9)
@@ -292,14 +293,36 @@ insert into mioraclepdbtabla values (000000001);
 
 ----+++++++++++++++++++++++++++
 ----+++++++++++++++++++++++++++
--- COMO SE CREA UNA NUEVA PDB Y COMO SE PUEDE USAR.
+-- COMO SE CREA UNA NUEVA PDB Y COMO SE PUEDE USAR. FIN. 
 ----+++++++++++++++++++++++++++
 ----+++++++++++++++++++++++++++
+
 
 -- de desa forma es la que se crea un nuevo usuario: 
 create user miusuariouno identified by miusuariounopassword;
 -- de esta forma es como veo todos los usuarios. 
 SELECT USERNAME, ACCOUNT_STATUS, DEFAULT_TABLESPACE FROM DBA_USERS ORDER BY USERNAME;
+
+-- el hecho de que dos usuarios accedan a una misma PDB (base de datos), no significa que los dos puedan ver las tablas que están
+-- en esa base de datos.
+-- con este comando veo de todas las tablas del usuario. 
+SELECT  TABLE_NAME FROM USER_TABLES order by TABLE_NAME;
+-- con eso veo todas las tablas de la PDB????
+SELECT TABLE_NAME FROM ALL_TABLES order by TABLE_NAME;
+--- con esto veo todas las tablas de todas las bases de datos. 
+SELECT table_name FROM dba_tables  order by table_name;
+
+
+--si yo como usuario sys quiero ver cual es el cotenido de la tabla dept, la consulta tendría que se esta: 
+select * from SYSTEM.dept;
+
+-- ?????  de esa forma como system le puedo dar permisos a sys para que acceda a la tabla: 
+GRANT SELECT ON DEPT TO SYS;
+REVOKE SELECT ON DEPT FROM SYS;
+
+--???? de esta forma le doy todos los permisos. 
+GRANT ALL ON DEPT TO SYS;
+REVOKE ALL ON DEPT TO SYS;
 
 
 --?? ver que desde una nueva PDB no se pueden ver las tablas de otra PDB. 
@@ -318,12 +341,38 @@ SELECT USERNAME, ACCOUNT_STATUS, DEFAULT_TABLESPACE FROM DBA_USERS ORDER BY USER
 
 
 
+--??? me estoy dando cuenta de que las PDB nuevas creadas, en el momento que apago y enciendo el ordenador ya cambian su estado de "read write" 
+a "mounted"
+
+
+
+
+---que accesos entñan permitidos:
+--CDB$ROOT...   SYSTEM: si puede ver todas las tablas. SYS: no puede ver las tablas. 
+--miOraclePDB(una vez que he entrado con sys para y la he abierto)...: SYSTEM: sí puedo acceder. SYS: Sí puedo acceder. 
+--miOraclePDBdos(solamente creada si activar)... SYSTEM: no puedo acceder. SYS: sí puedo acceder. 
 
 
 
 
 
 
+ALTER SESSION SET CONTAINER = MIORACLEPDBDOS;
+ALTER SESSION SET CONTAINER = MIORACLEPDB;
+
+
+CREATE TABLE CDB$ROOTtabla
+  (dni NUMBER(9)
+);
+insert into CDB$ROOTtabla values (000000100);
+insert into CDB$ROOTtabla values (000000101);
+
+
+
+??? jhonjames: ver  con distintos PDB e inclus con distintos propietarios cual es la diferencia entre  dba_tables y ALL_TABLES
+SELECT owner, table_name FROM dba_tables  WHERE table_name = 'CDB$ROOTTABLA' ORDER BY owner;v
+SELECT OWNER, TABLE_NAME FROM ALL_TABLES WHERE TABLE_NAME = 'CDB$ROOTTABLA';
+SELECT  TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME = 'CDB$ROOTTABLA';
 
 
 

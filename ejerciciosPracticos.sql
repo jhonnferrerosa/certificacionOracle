@@ -856,10 +856,7 @@ VALUES ('48888888B', 'Elena', 'González Martínez', DATE '2005-03-20', 'Madrid'
 
 -- Tema 0. Clases de otro profesor llamado Juan. 
 -- Esto es para ver todas las tablas que tiene ese usuario. 
-select object_name from user_objects where object_type = 'TABLE';
-select * from user_tables;
--- este es lo mismo que el anterior, pero más concreto ya que realmente lo que más importa es el nombre de las tablas de lo que queremos saber. 
-SELECT TABLE_NAME FROM USER_TABLES;
+SELECT  TABLE_NAME FROM USER_TABLES order by TABLE_NAME;
 --- comentario sobre una tabla. 
 comment on table emp  is ' esto es un comentario de prueba';
 comment on table emp  is ' esto es un comentario de prueba 2';
@@ -870,8 +867,6 @@ select * from ALL_TAB_COMMENTS;
 select * from ALL_TAB_COMMENTS where TABLE_NAME='EMP';
 select * from prueba;
 select * from ALL_TAB_COMMENTS where TABLE_NAME='PRUEBA';
--- esto es para ver todas las tablas de la BBDD. 
-select * from ALL_TABLES;
 
 --9/4/2025   teoría sobre funciones de Oracle. 
 select * from emp;
