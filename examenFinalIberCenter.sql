@@ -1,5 +1,18 @@
 
---drop  table Peliculas;
+
+select * from peliculas;
+select * from pedidos;
+select * from clientes;
+
+drop table Pedidos;
+drop table Clientes;
+drop  table Peliculas;
+drop table Distribuidoras;
+drop table Generos;
+drop table Nacionalidad;
+
+
+
 create table Peliculas (
     idPelicula number, 
     idDistribuidor number,
@@ -15,7 +28,6 @@ create table Peliculas (
     precio number
 );
 
-drop table Distribuidoras;
 create table Distribuidoras (  
     idDistribuidor number,
     distribuidor varchar(50),
@@ -27,7 +39,6 @@ create table Distribuidoras (
     logo varchar (50)
 );
 
---drop table Pedido;
 create table Pedidos (
     idPedido number,
     idCliente number,
@@ -83,7 +94,7 @@ ALTER TABLE Nacionalidad
 ADD CONSTRAINT PK_idNacionalidad
 PRIMARY KEY (idNacionalidad);
 
---- aqui faltan las constrains del email, es decir los check. asdf 
+--- aqui faltan las constrains del email, es decir los check. 
 
 
 alter table Peliculas add constraint fk_Peliculas_Distribuidoras foreign key (idDistribuidor) references Distribuidoras (idDistribuidor);
@@ -97,11 +108,10 @@ insert into Distribuidoras values (1, 'fox', 'calle veinitres', 'www.fox.com', '
 insert into Generos values (10, 'MISTERIO');
 insert into Nacionalidad values (100, 'EEUU. ', 'EEUUbandera. ');
 
-insert into peliculas values (1000, 1, 10, 'pelicula ET el marciano. ', 100, 'pelicula de extraterrestres', 'www.foto23.com', '16/05/1990', 'brat pit', 'brat pit', '50 minutos. ', 50);
+insert into peliculas values (1000, 1, 10, 'pelicula ET el marciano. ', 100, 'pelicula de extraterrestres', 'www.foto23.com', to_date('16/05/90', 'dd/mm/rr'), 'brat pit', 'brat pit', '50 minutos. ', 50);
 
 insert into Clientes values (2000, 'ferndando ', 'calle Serrano.', 'ferndando@gmail.com', 28500, 'www.fernando33.com', 'www.fotoFernando.com');
-insert into Pedidos values (3000, 2000, 1000, 3, '6/05/2025', 100);
-
+insert into Pedidos values (3000, 2000, 1000, 3, to_date('6/05/2025','dd/mm/rr'), 100);
 
 --ejercicio3. 
 create or replace procedure procedimientoNuevoCliente (p1 number,  p2 varchar, p3 varchar,p4 varchar, p5 number, p6 varchar,p7 varchar)
@@ -112,6 +122,10 @@ begin
     dbms_output.put_line ('procedimientoNuevoCliente()--- cliente insertado. ');
 end; 
 
+insert into Clientes values (2000, 'ferndando ', 'calle Serrano.', 'ferndando@gmail.com', 28500, 'www.fernando33.com', 'www.fotoFernando.com');
+begin
+    procedimientoNuevoCliente (2001, 'fernando2001', 'calle serrano2001', 'ferndando@gmail.com2001', 28500, 'www.fernando.com2001', 'www.fotoFernando.com2001');
+end;
 --- ejercicio 4. 
 create or replace function f_obtenerPrecioPeliculaPorIdPeicula (p1 number) return number
 as
@@ -220,24 +234,94 @@ execute storeProcedureMiProcedimiento;
 ---------------------++++++------++---+++++
 
 
-select * from regiones;
-select * from colegios;
-select * from profesores;
-select * from alumnos;
-delete from colegios where cod_colegio = 10;
-delete from alumnos;
-select * from emp;
-select * from emp where dept_no = 30;
-select * from emp where dept_no = 5538490;
-select * from emp where oficio = 'VENDEDOR';
-select * from dept;
-select * from emp_comision;
+
+--ver todas la PDB que existen: 
+SELECT name, open_mode FROM v$pdbs;
+
+-- esta es la forma en la que puedo ver a todos los usuarios. 
+SELECT username FROM dba_users ORDER BY 1;
 
 
-delete from dept where dept_no = 30;
-update dept set dept_no = 5538490 where dept_no = 30;
+-- Verificar PDB actual y que usuario eres . 
+SELECT 
+    SYS_CONTEXT('USERENV', 'CON_NAME') AS pdb_actual,
+    SYS_CONTEXT('USERENV', 'SESSION_USER') AS usuario_actual
+FROM dual;
+-- esto es otra forma de hacerlo. 
+SHOW USER
+SHOW CON_NAME
 
-select object_name from user_objects where object_type = 'TRIGGER';
+-- de esta forma es como yo me conecto a una PDB específica (tener en cuenta que cuando instalé Oracle, creé una PDB llamada MIORACLEPDB): 
+ALTER SESSION SET CONTAINER = MIORACLEPDB;
+
+-- esta es la forma de eliminar una PDB (en este ejemplo se hace con este nombre de PDB: MIORACLEPDB), de la manera en que funciona, es estando desde otra PDB. 
+--1º hay que cerrar la conexión. 
+ALTER PLUGGABLE DATABASE MIORACLEPDB CLOSE;
+--2º se elimina los datos de la BBDD.
+DROP PLUGGABLE DATABASE MIORACLEPDB INCLUDING DATAFILES;
+
+----+++++++++++++++++++++++++++
+----+++++++++++++++++++++++++++
+-- COMO SE CREA UNA NUEVA PDB Y COMO SE PUEDE USAR.
+----+++++++++++++++++++++++++++
+----+++++++++++++++++++++++++++
+-- PASO1. Conéctate como SYS o como SYSTEM. 
+-- la forma de conectarse como SYSTEM, es la habitual:  SYSTEM  Oracle11!! 
+-- desde la consola, esta es la forma en la puedo acceder a la PLSQL como usuario "sys" en vez del clásico SYSTEM.
+-- la contraseña es Oracle11!!  
+sqlplus sys as sysdba
+
+-- PASO2, así se crea la PDB. 
+CREATE PLUGGABLE DATABASE MIORACLEPDB
+    ADMIN USER pdbadmin IDENTIFIED BY Oracle123
+    FILE_NAME_CONVERT = ('pdbseed', 'MIORACLEPDB');
+	
+	
+--el hecho de crear una nueva PDB, no significa que ya se pueda usar, si no que además hay que abirla, para que de esta forma podamos ejecutar consultas
+-- sobre esta PDB. Para hacer esto es mejor estar como sys y en la pdb: CDB$ROOT, ya que este usuario sí que puede hacer esta modificación. 
+--1º necesitamos verificar el estado, es decir, el open_mode de la PDB. Recordar que este comando localiza todas las PDB y su estado. 
+-- en el caso de que sea mounted o closed, habrá que abrirla. 
+SELECT name, open_mode FROM v$pdbs;
+--2º así se abre, de tal forma que el open_mode (o también llamado estado) queda así: READ WRITE 
+ALTER PLUGGABLE DATABASE MIORACLEPDB OPEN;
+--3º para probar que la BBDD ya se puede usar, voy  crear esta tabla y voy a inserta un dato. 
+CREATE TABLE mioraclepdbtabla
+  (dni NUMBER(9)
+);
+insert into mioraclepdbtabla values (000000001);
+
+----+++++++++++++++++++++++++++
+----+++++++++++++++++++++++++++
+-- COMO SE CREA UNA NUEVA PDB Y COMO SE PUEDE USAR.
+----+++++++++++++++++++++++++++
+----+++++++++++++++++++++++++++
+
+-- de desa forma es la que se crea un nuevo usuario: 
+create user miusuariouno identified by miusuariounopassword;
+-- de esta forma es como veo todos los usuarios. 
+SELECT USERNAME, ACCOUNT_STATUS, DEFAULT_TABLESPACE FROM DBA_USERS ORDER BY USERNAME;
+
+
+--?? ver que desde una nueva PDB no se pueden ver las tablas de otra PDB. 
+
+
+--?? he visto que el usuario sys y el usuario system no tiene los mismos provilegios para crear y poner en marcha una PDB nueva, ¿pero, 
+--pueden los dos hacer modificaciones de la misma forma una vez se haya creado la PDB? 
+
+
+--??????????????????
+-- ahora lo que quiero ver es que es lo que pasa con los usuarios y las PDB. 
+
+--¿puedo crear y borrar usuarios desde cualquier PDB o incluso desde la CDB? 
+
+--¿cómo puedo dar permisos a otros usuarios a una nueva PDB? debería de probar esto direcamente con las tablas.  
+
+
+
+
+
+
+
 
 
 

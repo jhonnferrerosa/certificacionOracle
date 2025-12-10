@@ -856,6 +856,7 @@ VALUES ('48888888B', 'Elena', 'González Martínez', DATE '2005-03-20', 'Madrid'
 
 -- Tema 0. Clases de otro profesor llamado Juan. 
 -- Esto es para ver todas las tablas que tiene ese usuario. 
+select object_name from user_objects where object_type = 'TABLE';
 select * from user_tables;
 -- este es lo mismo que el anterior, pero más concreto ya que realmente lo que más importa es el nombre de las tablas de lo que queremos saber. 
 SELECT TABLE_NAME FROM USER_TABLES;
@@ -1068,6 +1069,7 @@ select * from user_constraints;
 ---------------------++++++------++---+++++
 ---------------------++++++------++---+++++
 ---------------------++++++------++---+++++
+
 
 
 
