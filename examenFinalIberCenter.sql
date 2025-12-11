@@ -252,6 +252,7 @@ SHOW CON_NAME
 -- de esta forma es como yo me conecto a una PDB específica: 
 ALTER SESSION SET CONTAINER = MIORACLEPDBUNO;
 ALTER SESSION SET CONTAINER = MIORACLEPDBDOS;
+ALTER SESSION SET CONTAINER = CDB$ROOT;
 
 ----+++++++++++++++++++++++++++
 ----+++++++++++++++++++++++++++
@@ -345,12 +346,19 @@ REVOKE ALL ON DEPT TO SYS;
 --¿cómo puedo dar permisos a otros usuarios a una nueva PDB? debería de probar esto direcamente con las tablas.  
 
 
-
--- me estoy dando cuenta de que las PDB nuevas creadas, en el momento que apago y enciendo el ordenador ya cambian su estado de "read write" 
---a "mounted"
+--cuidado porque dentro de una PDB, no se puede crear otra PDB. ni sys ni SYSTEM. Sólo desde CDB. 
 
 
---cuidado porque dentro de una PDB, no se puede crear otra PDB. ni sys ni SYSTEM. Sól desde CDB. 
+--CDB$ROOT... SYSTEM(user_tables): 144   SYS(user_tables):  1536
+--MIORACLEPDBUNO...  SYSTEM(user_tables): 131   SYS(user_tables):  1533
+--MIORACLEPDBDOS...  SYSTEM(user_tables): 131   SYS(user_tables):  1533
+--CDB$ROOT... SYSTEM(ALL_TABLES): 2193    SYS(ALL_TABLES):   2193
+--MIORACLEPDBUNO...  SYSTEM(ALL_TABLES):  2177   SYS(ALL_TABLES):   2177
+--MIORACLEPDBDOS...  SYSTEM(ALL_TABLES):   2177  SYS(ALL_TABLES):   2177
+--CDB$ROOT... SYSTEM(dba_tables): 2193    SYS(dba_tables):   2193
+--MIORACLEPDBUNO...  SYSTEM(dba_tables):  2177   SYS(dba_tables): 2177  
+--MIORACLEPDBDOS...  SYSTEM(dba_tables):   2177  SYS(dba_tables):   2177
+
 
 
 CREATE TABLE CDB$ROOTtabla
@@ -359,7 +367,7 @@ CREATE TABLE CDB$ROOTtabla
 insert into CDB$ROOTtabla values (000000100);
 insert into CDB$ROOTtabla values (000000101);
 
-??? jhonjames: ver  con distintos PDB e inclus con distintos propietarios cual es la diferencia entre  dba_tables y ALL_TABLES
+----??? jhonjames: ver  con distintos PDB e inclus con distintos propietarios cual es la diferencia entre  dba_tables y ALL_TABLES
 SELECT owner, table_name FROM dba_tables  WHERE table_name = 'CDB$ROOTTABLA' ORDER BY owner;v
 SELECT OWNER, TABLE_NAME FROM ALL_TABLES WHERE TABLE_NAME = 'CDB$ROOTTABLA';
 SELECT  TABLE_NAME FROM USER_TABLES WHERE TABLE_NAME = 'CDB$ROOTTABLA';
